@@ -38,14 +38,14 @@ def create_time_features_from_date(df, date_column="DATE"):
     return df
 
 # Visualizations
-def plot_total_sales_by_day_of_week(sales_by_date, date_column="DATE", sales_column="Sales_EUR", color=main_color):
+def plot_nr_sales_by_day_of_week(sales_by_date, date_column="DATE", sales_column="Sales_EUR", color=main_color):
     # Plot the distribution of sales by day of the week with specified color
     plt.figure(figsize=(12, 5))
     sns.countplot(data=sales_by_date, x="NameDayOfWeek", order=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], palette=[color])
     plt.title("Number of Sales by Day of the Week")
     plt.show()
 
-def plot_nr_sales_by_day_of_week(sales_data, date_column="DATE", sales_column="Sales_EUR", color=main_color):
+def plot_total_sales_by_day_of_week(sales_data, date_column="DATE", sales_column="Sales_EUR", color=main_color):
     # Sum the sales for each day of the week
     sales_by_day = sales_data.groupby("NameDayOfWeek")[sales_column].sum().reset_index()
 
@@ -60,6 +60,6 @@ def plot_nr_sales_by_day_of_week(sales_data, date_column="DATE", sales_column="S
     # Plot the summed sales by day of the week
     plt.figure(figsize=(12, 5))
     sns.barplot(data=sales_by_day, x="NameDayOfWeek", y=sales_column, palette=[color])
-    plt.title("Total Sales by Day of the Week")
+    plt.title("Total Sales (EUR) by Day of the Week")
     plt.ylabel("Total Sales (EUR)")
     plt.show()
