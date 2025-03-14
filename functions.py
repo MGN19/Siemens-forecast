@@ -6,6 +6,35 @@ import holidays
 
 main_color = '#009C8C'
 
+# Data Exploration
+# Missing Value Analysis
+def missing_value_summary(dataframe):
+    """
+    Provides a summary of missing values in the DataFrame.
+    
+    Parameters:
+        dataframe: The DataFrame to analyze.
+    
+    Returns:
+        pd.DataFrame: Summary of columns with missing values, including unique values, NaN count, and percentage.
+    """
+    nan_columns = dataframe.columns[dataframe.isna().any()].tolist()
+    summary_data = []
+    
+    for column in nan_columns:
+        nan_number = dataframe[column].isna().sum()
+        nan_percentage = (nan_number / len(dataframe)) * 100
+        unique_values = dataframe[column].nunique()
+        summary_data.append({
+            'Unique Values': unique_values,
+            'NaN Values': nan_number,
+            'Percentage NaN': nan_percentage
+        })
+    
+    summary = pd.DataFrame(summary_data, index=nan_columns)
+    return summary
+
+
 def create_time_features_from_date(df, date_column="DATE"):
     """
     This function creates time-related features from a given date column in a DataFrame.
