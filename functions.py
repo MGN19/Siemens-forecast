@@ -8,6 +8,9 @@ import plotly.graph_objects as go
 import itertools
 from plotly.subplots import make_subplots
 from matplotlib.ticker import MaxNLocator, FuncFormatter
+import ipywidgets as widgets
+from statsmodels.tsa.seasonal import seasonal_decompose
+from IPython.display import display, clear_output
 
 
 main_color = '#009C8C'
@@ -189,3 +192,266 @@ def plot_stacked_bar(yearly_data):
 
     plt.tight_layout()
     plt.show()
+
+# Monthly sales line plot
+def monthly_sales_per_year(monthly_sales):
+    """Generates an interactive Plotly figure for monthly sales with a year selection dropdown."""
+    
+    # Extract unique years
+    years = monthly_sales.index.year.unique()
+    
+    # Create figure
+    fig = go.Figure()
+    traces, visibility_options = [], []
+
+    # Add traces per year
+    for i, year in enumerate(years):
+        yearly_data = monthly_sales[monthly_sales.index.year == year]
+        
+        for column in yearly_data.columns:
+            fig.add_trace(go.Scatter(
+                x=yearly_data.index,
+                y=yearly_data[column].replace(0, None),  
+                mode='lines',
+                name=f"{column} ({year})",
+                visible=(i == 0)
+            ))
+            traces.append(f"{column} ({year})")
+
+    # Create dropdown menu
+    for i, year in enumerate(years):
+        visibility = [f"({year})" in name for name in traces]
+        visibility_options.append(dict(label=str(year), method="update",
+                                       args=[{"visible": visibility}, {"title": f"Monthly Sales in {year}"}]))
+
+    # Update layout
+    fig.update_layout(
+        xaxis=dict(tickformat="%b %Y", dtick="M1", tickangle=-45, tickmode="array", tickvals=monthly_sales.index),
+        updatemenus=[{"buttons": visibility_options, "direction": "down", "showactive": True, "x": 0.1, "y": 1.15}],
+        title=f"Monthly Sales in {years[0]}",
+        xaxis_title="Date",
+        yaxis_title="Sales",
+        legend_title="Product",
+        template="plotly_white"
+    )
+
+    return fig
+
+def monthly_sales(monthly_sales_resampled):
+    fig = go.Figure()
+
+    # Add traces for each 'Mapped_GCK', skipping zero sales
+    for column in monthly_sales_resampled.columns:
+        fig.add_trace(go.Scatter(
+            x=monthly_sales_resampled.index,
+            y=monthly_sales_resampled[column].replace(0, None),
+            mode='lines',
+            name=column
+        ))
+
+    # Update layout with all months on x-axis and no grid lines
+    fig.update_layout(
+        title='Monthly Sales Over Time',
+        xaxis_title='Date',
+        yaxis_title='Sales',
+        legend_title='Product',
+        xaxis=dict(
+            tickangle=45,
+            tickmode='array',
+            tickvals=monthly_sales_resampled.index,
+            ticktext=[date.strftime('%b %Y') for date in monthly_sales_resampled.index],
+            showgrid=False
+        ),
+        yaxis=dict(showgrid=False),
+        template='plotly_white'
+    )
+
+    fig.show()
+
+# Subplots of line plots (percentage change)
+def percentage_change(monthly_sales_resampled, num_rows=5, num_cols=3):
+    num_plots = num_rows * num_cols
+    fig = make_subplots(rows=num_rows, cols=num_cols)
+
+    # Loop through columns (products) and create subplots
+    for i, product in enumerate(monthly_sales_resampled.columns[:num_plots]):
+        row = i // num_cols + 1
+        col = i % num_cols + 1
+        
+        # Calculate percentage change considering the sign of sales from the previous month
+        previous_month_sales = monthly_sales_resampled[product].shift(1)  # Sales from the previous month
+        percentage_change = ((monthly_sales_resampled[product] - previous_month_sales) / previous_month_sales) * 100
+        
+        # Add the trace to the subplot
+        fig.add_trace(go.Scatter(x=monthly_sales_resampled.index, y=percentage_change, mode='lines', name=product),
+                      row=row, col=col)
+        
+        # Update the y-axis title for each subplot
+        fig.update_yaxes(title_text=f"Change (%) - {product}", row=row, col=col)
+
+    # Update layout and title for the figure
+    fig.update_layout(
+        height=1000, 
+        width=1450, 
+        title_text="Percentage Change in Sales for Each Product",
+        showlegend=False
+    )
+
+    # Show the plot
+    fig.show()
+
+# Subplots of percentage change previuos month
+def percentage_change_previous_month(monthly_sales_resampled, num_rows=5, num_cols=3):
+    num_plots = num_rows * num_cols
+    fig = make_subplots(rows=num_rows, cols=num_cols)
+
+    percentage_change_df = monthly_sales_resampled.pct_change(periods=12) * 100
+
+    for i, product in enumerate(monthly_sales_resampled.columns[:num_plots]):
+        row = i // num_cols + 1
+        col = i % num_cols + 1
+        
+        fig.add_trace(go.Scatter(x=monthly_sales_resampled.index, y=percentage_change_df[product], mode='lines', name=product),
+                      row=row, col=col)
+        
+        fig.update_yaxes(title_text=f"Change (%) - {product}", row=row, col=col)
+
+    fig.update_layout(
+        height=1000, 
+        width=1450, 
+        title_text="Percentage change in sales for each product compared to the same month of previous year",
+        showlegend=False
+    )
+
+    fig.show()
+
+
+# Multiplicative
+def multiplicative_seasonal_decomposition(df, excluded_columns=None, period=12):
+    """
+    Creates an interactive dropdown for seasonal decomposition analysis.
+
+    Parameters:
+    - df: DataFrame containing time-series data.
+    - excluded_columns: List of columns to exclude from selection.
+    - period: Seasonal period for decomposition.
+
+    Returns:
+    - A widget with a dropdown menu and dynamic seasonal decomposition plots.
+    """
+
+    if excluded_columns is None:
+        excluded_columns = []
+
+    # Select available columns
+    available_columns = [col for col in df.columns if col not in excluded_columns]
+
+    if not available_columns:
+        raise ValueError("No available columns after exclusions!")
+
+    # Dropdown widget
+    dropdown = widgets.Dropdown(
+        options=available_columns,
+        value=available_columns[0],  
+        description='Select Column:',
+        style={'description_width': 'initial'}
+    )
+
+    # Output widget
+    output = widgets.Output()
+
+    # Function to update the graph dynamically
+    def update_graph(change):
+        with output:
+            clear_output(wait=True) 
+            selected_column = dropdown.value
+            result = seasonal_decompose(df[selected_column], model='multiplicative', period=period, extrapolate_trend='freq')
+
+            # Plot decomposition
+            fig, axes = plt.subplots(4, 1, figsize=(12, 8))
+            
+            result.observed.plot(ax=axes[0], title='Observed')
+            result.trend.plot(ax=axes[1], title='Trend')
+            result.seasonal.plot(ax=axes[2], title='Seasonal')
+
+            # Residuals as scatter points
+            axes[3].scatter(df.index, result.resid, color='red', s=10)  # Red points with size 10
+            axes[3].set_title('Residuals')
+
+            plt.suptitle(f'Seasonal Decomposition for {selected_column}', fontsize=14)
+            plt.tight_layout()
+            plt.show()
+
+    # Attach function to dropdown changes
+    dropdown.observe(update_graph, names='value')
+
+    # Display widgets
+    display(dropdown, output)
+
+    # Initial plot
+    update_graph(None)
+
+# Addictive
+def additive_seasonal_decomposition(df, excluded_columns=None, period=12):
+    """
+    Creates an interactive dropdown for additive seasonal decomposition analysis.
+
+    Parameters:
+    - df: DataFrame containing time-series data.
+    - excluded_columns: List of columns to exclude from selection.
+    - period: Seasonal period for decomposition.
+
+    Returns:
+    - A widget with a dropdown menu and dynamic seasonal decomposition plots.
+    """
+
+    if excluded_columns is None:
+        excluded_columns = []
+
+    # Select  columns
+    available_columns = [col for col in df.columns if col not in excluded_columns]
+
+    if not available_columns:
+        raise ValueError("No available columns after exclusions!")
+
+    # Dropdown widget
+    dropdown = widgets.Dropdown(
+        options=available_columns,
+        value=available_columns[0],  # Default selection
+        description='Select Column:',
+        style={'description_width': 'initial'}
+    )
+
+    # Output widget
+    output = widgets.Output()
+
+    # Function to update the graph dynamically
+    def update_graph(change):
+        with output:
+            clear_output(wait=True)  
+            selected_column = dropdown.value
+            result = seasonal_decompose(df[selected_column], model='additive', period=period, extrapolate_trend='freq')
+
+            # Plot decomposition
+            fig, axes = plt.subplots(4, 1, figsize=(12, 8))
+            
+            result.observed.plot(ax=axes[0], title='Observed')
+            result.trend.plot(ax=axes[1], title='Trend')
+            result.seasonal.plot(ax=axes[2], title='Seasonal')
+
+            # Residuals as scatter points
+            axes[3].scatter(df.index, result.resid, color='red', s=10)  # Red points with size 10
+            axes[3].set_title('Residuals')
+
+            plt.suptitle(f'Additive Seasonal Decomposition for {selected_column}', fontsize=14)
+            plt.tight_layout()
+            plt.show()
+
+    # Attach function to dropdown changes
+    dropdown.observe(update_graph, names='value')
+
+    # Display widgets
+    display(dropdown, output)
+
+    # Initial plot
+    update_graph(None)
