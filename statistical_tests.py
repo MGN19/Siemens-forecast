@@ -4,6 +4,8 @@ import pandas as pd
 from statsmodels.tsa.stattools import grangercausalitytests
 import matplotlib.pyplot as plt
 from statsmodels.tsa.seasonal import STL
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # Augmented Dickey-Fuller Test
 def adf_test_all_columns(df, columns):
@@ -63,9 +65,9 @@ def granger_causality_test(data, target_column, max_lag=4, threshold=0.05):
 
 
 # STL Decomposition
-def plot_stl_decomposition(df, columns, seasonal_period = 12):
+def stl_decomposition(df, columns, seasonal_period=12):
     """
-    Perform STL decomposition on multiple time series columns and visualize the components.
+    Perform STL decomposition on multiple time series columns and visualize the components using Plotly.
 
     Parameters:
     - df (pd.DataFrame): DataFrame containing the time series data.
@@ -73,25 +75,24 @@ def plot_stl_decomposition(df, columns, seasonal_period = 12):
     - seasonal_period (int): The seasonal period of the time series. Default is 12 for monthly data.
     """
     for column in columns:
-
         # Perform STL decomposition
         stl = STL(df[column], seasonal_period)
         result = stl.fit()
 
-        # Plot the decomposition
-        fig, axes = plt.subplots(4, 1, figsize=(12, 8), sharex=True)
-        fig.suptitle(f"STL Decomposition for {column}", fontsize=14)
+        # Create subplots
+        fig = make_subplots(rows=4, cols=1, shared_xaxes=True, 
+                            subplot_titles=("Original Time Series", "Trend Component", "Seasonal Component", "Residuals"))
 
-        axes[0].plot(df.index, df[column], label="Original")
-        axes[0].set_title("Original Time Series")
+        # Add traces for each component
+        fig.add_trace(go.Scatter(x=df.index, y=df[column], name="Original", line=dict(color="blue")), row=1, col=1)
+        fig.add_trace(go.Scatter(x=df.index, y=result.trend, name="Trend", line=dict(color="green")), row=2, col=1)
+        fig.add_trace(go.Scatter(x=df.index, y=result.seasonal, name="Seasonality", line=dict(color="orange")), row=3, col=1)
+        fig.add_trace(go.Scatter(x=df.index, y=result.resid, name="Residuals", line=dict(color="red")), row=4, col=1)
 
-        axes[1].plot(df.index, result.trend, label="Trend", color="green")
-        axes[1].set_title("Trend Component")
+        # Update layout
+        fig.update_layout(title_text=f"STL Decomposition for {column}", height=800, showlegend=False)
+  
+        fig.update_xaxes(title_text="Time", row=4, col=1)  # Only add x-axis label to the last row
 
-        axes[2].plot(df.index, result.seasonal, label="Seasonality", color="orange")
-        axes[2].set_title("Seasonal Component")
-
-        axes[3].plot(df.index, result.resid, label="Residuals", color="red")
-        axes[3].set_title("Residuals (Noise)")
-
-        plt.show()
+        # Show the figure
+        fig.show()
