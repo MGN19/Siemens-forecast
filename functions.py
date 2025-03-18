@@ -532,3 +532,47 @@ def plot_distribution_and_boxplot(df, column_name, n_bins, out_left=None, out_ri
 
     plt.tight_layout()
     plt.show()
+
+# Create Semester column
+def get_semester(month):
+    if month <= 6:
+        return 1  # Semester 1 (January to June)
+    else:
+        return 2  # Semester 2 (July to December)
+
+# Create Quarter column
+def get_quarter(month):
+    if month in [1, 2, 3]:
+        return 'Q1'  # Quarter 1 (January to March)
+    elif month in [4, 5, 6]:
+        return 'Q2'  # Quarter 2 (April to June)
+    elif month in [7, 8, 9]:
+        return 'Q3'  # Quarter 3 (July to September)
+    else:
+        return 'Q4'  # Quarter 4 (October to December)
+    
+def count_weekends_in_month(year, month):
+    # Generate all the dates for the given month
+    first_day = pd.Timestamp(f'{year}-{month:02d}-01')
+    last_day = pd.Timestamp(f'{year}-{month:02d}-01') + pd.offsets.MonthEnd()
+    all_dates_in_month = pd.date_range(first_day, last_day)
+    
+    # Count the number of weekends (Saturday=5, Sunday=6)
+    weekend_count = sum(all_dates_in_month.weekday.isin([5, 6]))
+    return weekend_count, len(all_dates_in_month)
+
+# Count Sundays in the month
+def count_sundays_in_month(year, month):
+    first_day = pd.Timestamp(f'{year}-{month:02d}-01')
+    last_day = pd.Timestamp(f'{year}-{month:02d}-01') + pd.offsets.MonthEnd()
+    all_dates_in_month = pd.date_range(first_day, last_day)
+    
+    # Count Sundays (weekday=6)
+    sunday_count = sum(all_dates_in_month.weekday == 6)
+    return sunday_count
+
+def count_holidays_in_month(data, year, month):
+    german_holidays = holidays.Germany(years=data.index.year.unique())
+    # Generate holidays in the given month
+    holidays_in_month = [day for day in german_holidays if day.year == year and day.month == month]
+    return len(holidays_in_month)
