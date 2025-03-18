@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 # Augmented Dickey-Fuller Test
-def adf_test_all_columns(df, columns):
+def adf_test(df, columns):
     results = {}
     for col in columns:  
         result = adfuller(df[col], autolag='AIC')
