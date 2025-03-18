@@ -499,7 +499,7 @@ def resource_prices(market_data_resampled, resources_prices):
 
 
 # Outliers
-def plot_distribution_and_boxplot(df, column_name, n_bins, out_left=None, out_right=None, color=f.main_color):
+def plot_distribution_and_boxplot(df, column_name, n_bins, out_left=None, out_right=None, color=main_color):
     """
     Plots the histogram and box plot for a specific column with optional outlier boundaries.
 
