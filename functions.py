@@ -1,10 +1,48 @@
 # VIsualization libraries
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import holidays
+import plotly.graph_objects as go
+import itertools
+from plotly.subplots import make_subplots
+from matplotlib.ticker import MaxNLocator, FuncFormatter
+import ipywidgets as widgets
+from statsmodels.tsa.seasonal import seasonal_decompose
+from IPython.display import display, clear_output
+
 
 main_color = '#009C8C'
+
+# Data Exploration
+# Missing Value Analysis
+def missing_value_summary(dataframe):
+    """
+    Provides a summary of missing values in the DataFrame.
+    
+    Parameters:
+        dataframe: The DataFrame to analyze.
+    
+    Returns:
+        pd.DataFrame: Summary of columns with missing values, including unique values, NaN count, and percentage.
+    """
+    nan_columns = dataframe.columns[dataframe.isna().any()].tolist()
+    summary_data = []
+    
+    for column in nan_columns:
+        nan_number = dataframe[column].isna().sum()
+        nan_percentage = (nan_number / len(dataframe)) * 100
+        unique_values = dataframe[column].nunique()
+        summary_data.append({
+            'Unique Values': unique_values,
+            'NaN Values': nan_number,
+            'Percentage NaN': nan_percentage
+        })
+    
+    summary = pd.DataFrame(summary_data, index=nan_columns)
+    return summary
+
 
 def create_time_features_from_date(df, date_column="DATE"):
     """
@@ -62,4 +100,435 @@ def plot_total_sales_by_day_of_week(sales_data, date_column="DATE", sales_column
     sns.barplot(data=sales_by_day, x="NameDayOfWeek", y=sales_column, palette=[color])
     plt.title("Total Sales (EUR) by Day of the Week")
     plt.ylabel("Total Sales (EUR)")
+    plt.show()
+
+
+# Histogram subplots
+def plot_boxplots(pivoted_data, num_rows=5, num_cols=3, box_color=main_color):
+    num_plots = num_rows * num_cols
+    fig = make_subplots(rows=num_rows, cols=num_cols)
+    
+    for i, product in enumerate(pivoted_data.columns[1:num_plots+1]):
+        row = i // num_cols + 1
+        col = i % num_cols + 1
+        fig.add_trace(
+            go.Box(
+                y=pivoted_data[product], 
+                name=product,
+                marker=dict(color=box_color),
+                line=dict(color=box_color)
+            ), 
+            row=row, col=col
+        )
+    
+    fig.update_layout(
+        title='Total sales of each product',
+        height=800,
+        width=1100,
+        showlegend=False
+    )
+    
+    fig.show()
+
+
+# Scatter plot subplots (corr > 50)
+def plot_high_correlation_pairs(pivoted_data, threshold=0.50, num_cols=5):
+    columns = pivoted_data.columns
+    all_pairs = [(x, y, np.corrcoef(pivoted_data[x], pivoted_data[y])[0, 1]) 
+                 for x, y in itertools.combinations(columns, 2)]
+    
+    filtered_pairs = sorted([(x, y, r) for x, y, r in all_pairs if abs(r) > threshold], 
+                            key=lambda p: abs(p[2]), reverse=True)
+    
+    num_rows = -(-len(filtered_pairs) // num_cols) 
+    fig = make_subplots(rows=num_rows, cols=num_cols, 
+                        subplot_titles=[f"{x} vs {y}" for x, y, _ in filtered_pairs])
+    
+    for i, (x, y, r) in enumerate(filtered_pairs):
+        row, col = divmod(i, num_cols)
+        x_data, y_data = pivoted_data[x], pivoted_data[y]
+        slope, intercept = np.polyfit(x_data, y_data, 1)
+        
+        fig.add_trace(go.Scatter(x=x_data, y=y_data, mode='markers', marker=dict(size=4, opacity=0.6)), row=row+1, col=col+1)
+        fig.add_trace(go.Scatter(x=x_data, y=slope * x_data + intercept, mode='lines', line=dict(color='red')), row=row+1, col=col+1)
+        
+        fig.add_annotation(x=x_data.mean(), y=y_data.max(), text=f"r = {r:.2f}", showarrow=False, font=dict(size=12), row=row+1, col=col+1)
+    
+    fig.update_layout(title="Pairwise Scatter Analysis (r > 0.50)", height=300*num_rows, width=250*num_cols, showlegend=False)
+    fig.show()
+
+
+# Stacked plot
+def plot_stacked_bar(yearly_data):
+    sns.set_style("whitegrid")
+    colors = sns.color_palette("husl", n_colors=14)
+    fig, ax = plt.subplots(figsize=(14, 8))
+
+    yearly_data.plot(kind="bar", stacked=True, ax=ax, color=colors, edgecolor="black", linewidth=0.6, zorder=2)
+    ax.grid(False)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    ax.set_xlabel("Year", fontsize=16, fontweight="bold", labelpad=15)
+    ax.set_ylabel("Value", fontsize=16, fontweight="bold", labelpad=15)
+    ax.set_title("Sales per product per year", fontsize=18, fontweight="bold", pad=20)
+    plt.xticks(rotation=45, ha="right", fontsize=12, weight="bold")
+
+    ax.legend(title="Categories", bbox_to_anchor=(1.05, 1), loc="upper left", fontsize=12, title_fontsize=14, frameon=True, facecolor='white', edgecolor='black')
+
+    for rect in ax.patches:
+        rect.set_zorder(1)
+        rect.set_edgecolor('black')
+
+    # Disable scientific notation on y-axis and use normal formatting
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))  # Force integer formatting
+    ax.ticklabel_format(style='plain', axis='y')  # Disable scientific notation on y-axis
+
+    # Add comma as thousands separator to y-axis values
+    def comma_format(x, pos):
+        return f'{x:,.0f}'  # Format the number with commas
+
+    ax.yaxis.set_major_formatter(FuncFormatter(comma_format))
+
+    plt.tight_layout()
+    plt.show()
+
+# Monthly sales line plot
+def monthly_sales_per_year(monthly_sales):
+    """Generates an interactive Plotly figure for monthly sales with a year selection dropdown."""
+    
+    # Extract unique years
+    years = monthly_sales.index.year.unique()
+    
+    # Create figure
+    fig = go.Figure()
+    traces, visibility_options = [], []
+
+    # Add traces per year
+    for i, year in enumerate(years):
+        yearly_data = monthly_sales[monthly_sales.index.year == year]
+        
+        for column in yearly_data.columns:
+            fig.add_trace(go.Scatter(
+                x=yearly_data.index,
+                y=yearly_data[column].replace(0, None),  
+                mode='lines',
+                name=f"{column} ({year})",
+                visible=(i == 0)
+            ))
+            traces.append(f"{column} ({year})")
+
+    # Create dropdown menu
+    for i, year in enumerate(years):
+        visibility = [f"({year})" in name for name in traces]
+        visibility_options.append(dict(label=str(year), method="update",
+                                       args=[{"visible": visibility}, {"title": f"Monthly Sales in {year}"}]))
+
+    # Update layout
+    fig.update_layout(
+        xaxis=dict(tickformat="%b %Y", dtick="M1", tickangle=-45, tickmode="array", tickvals=monthly_sales.index),
+        updatemenus=[{"buttons": visibility_options, "direction": "down", "showactive": True, "x": 0.1, "y": 1.15}],
+        title=f"Monthly Sales in {years[0]}",
+        xaxis_title="Date",
+        yaxis_title="Sales",
+        legend_title="Product",
+        template="plotly_white"
+    )
+
+    return fig
+
+def monthly_sales(monthly_sales_resampled):
+    fig = go.Figure()
+
+    # Add traces for each 'Mapped_GCK', skipping zero sales
+    for column in monthly_sales_resampled.columns:
+        fig.add_trace(go.Scatter(
+            x=monthly_sales_resampled.index,
+            y=monthly_sales_resampled[column].replace(0, None),
+            mode='lines',
+            name=column
+        ))
+
+    # Update layout with all months on x-axis and no grid lines
+    fig.update_layout(
+        title='Monthly Sales Over Time',
+        xaxis_title='Date',
+        yaxis_title='Sales',
+        legend_title='Product',
+        xaxis=dict(
+            tickangle=45,
+            tickmode='array',
+            tickvals=monthly_sales_resampled.index,
+            ticktext=[date.strftime('%b %Y') for date in monthly_sales_resampled.index],
+            showgrid=False
+        ),
+        yaxis=dict(showgrid=False),
+        template='plotly_white'
+    )
+
+    fig.show()
+
+# Subplots of line plots (percentage change)
+def percentage_change(monthly_sales_resampled, num_rows=5, num_cols=3):
+    num_plots = num_rows * num_cols
+    fig = make_subplots(rows=num_rows, cols=num_cols)
+
+    # Loop through columns (products) and create subplots
+    for i, product in enumerate(monthly_sales_resampled.columns[:num_plots]):
+        row = i // num_cols + 1
+        col = i % num_cols + 1
+        
+        # Calculate percentage change considering the sign of sales from the previous month
+        previous_month_sales = monthly_sales_resampled[product].shift(1)  # Sales from the previous month
+        percentage_change = ((monthly_sales_resampled[product] - previous_month_sales) / previous_month_sales) * 100
+        
+        # Add the trace to the subplot
+        fig.add_trace(go.Scatter(x=monthly_sales_resampled.index, y=percentage_change, mode='lines', name=product),
+                      row=row, col=col)
+        
+        # Update the y-axis title for each subplot
+        fig.update_yaxes(title_text=f"Change (%) - {product}", row=row, col=col)
+
+    # Update layout and title for the figure
+    fig.update_layout(
+        height=1000, 
+        width=1450, 
+        title_text="Percentage Change in Sales for Each Product",
+        showlegend=False
+    )
+
+    # Show the plot
+    fig.show()
+
+# Subplots of percentage change previuos month
+def percentage_change_previous_month(monthly_sales_resampled, num_rows=5, num_cols=3):
+    num_plots = num_rows * num_cols
+    fig = make_subplots(rows=num_rows, cols=num_cols)
+
+    percentage_change_df = monthly_sales_resampled.pct_change(periods=12) * 100
+
+    for i, product in enumerate(monthly_sales_resampled.columns[:num_plots]):
+        row = i // num_cols + 1
+        col = i % num_cols + 1
+        
+        fig.add_trace(go.Scatter(x=monthly_sales_resampled.index, y=percentage_change_df[product], mode='lines', name=product),
+                      row=row, col=col)
+        
+        fig.update_yaxes(title_text=f"Change (%) - {product}", row=row, col=col)
+
+    fig.update_layout(
+        height=1000, 
+        width=1450, 
+        title_text="Percentage change in sales for each product compared to the same month of previous year",
+        showlegend=False
+    )
+
+    fig.show()
+
+
+# Multiplicative
+def multiplicative_seasonal_decomposition(df, excluded_columns=None, period=12):
+    """
+    Creates an interactive dropdown for seasonal decomposition analysis.
+
+    Parameters:
+    - df: DataFrame containing time-series data.
+    - excluded_columns: List of columns to exclude from selection.
+    - period: Seasonal period for decomposition.
+
+    Returns:
+    - A widget with a dropdown menu and dynamic seasonal decomposition plots.
+    """
+
+    if excluded_columns is None:
+        excluded_columns = []
+
+    # Select available columns
+    available_columns = [col for col in df.columns if col not in excluded_columns]
+
+    if not available_columns:
+        raise ValueError("No available columns after exclusions!")
+
+    # Dropdown widget
+    dropdown = widgets.Dropdown(
+        options=available_columns,
+        value=available_columns[0],  
+        description='Select Column:',
+        style={'description_width': 'initial'}
+    )
+
+    # Output widget
+    output = widgets.Output()
+
+    # Function to update the graph dynamically
+    def update_graph(change):
+        with output:
+            clear_output(wait=True) 
+            selected_column = dropdown.value
+            result = seasonal_decompose(df[selected_column], model='multiplicative', period=period, extrapolate_trend='freq')
+
+            # Plot decomposition
+            fig, axes = plt.subplots(4, 1, figsize=(12, 8))
+            
+            result.observed.plot(ax=axes[0], title='Observed')
+            result.trend.plot(ax=axes[1], title='Trend')
+            result.seasonal.plot(ax=axes[2], title='Seasonal')
+
+            # Residuals as scatter points
+            axes[3].scatter(df.index, result.resid, color='red', s=10)  # Red points with size 10
+            axes[3].set_title('Residuals')
+
+            plt.suptitle(f'Seasonal Decomposition for {selected_column}', fontsize=14)
+            plt.tight_layout()
+            plt.show()
+
+    # Attach function to dropdown changes
+    dropdown.observe(update_graph, names='value')
+
+    # Display widgets
+    display(dropdown, output)
+
+    # Initial plot
+    update_graph(None)
+
+# Addictive
+def additive_seasonal_decomposition(df, excluded_columns=None, period=12):
+    """
+    Creates an interactive dropdown for additive seasonal decomposition analysis.
+
+    Parameters:
+    - df: DataFrame containing time-series data.
+    - excluded_columns: List of columns to exclude from selection.
+    - period: Seasonal period for decomposition.
+
+    Returns:
+    - A widget with a dropdown menu and dynamic seasonal decomposition plots.
+    """
+
+    if excluded_columns is None:
+        excluded_columns = []
+
+    # Select  columns
+    available_columns = [col for col in df.columns if col not in excluded_columns]
+
+    if not available_columns:
+        raise ValueError("No available columns after exclusions!")
+
+    # Dropdown widget
+    dropdown = widgets.Dropdown(
+        options=available_columns,
+        value=available_columns[0],  # Default selection
+        description='Select Column:',
+        style={'description_width': 'initial'}
+    )
+
+    # Output widget
+    output = widgets.Output()
+
+    # Function to update the graph dynamically
+    def update_graph(change):
+        with output:
+            clear_output(wait=True)  
+            selected_column = dropdown.value
+            result = seasonal_decompose(df[selected_column], model='additive', period=period, extrapolate_trend='freq')
+
+            # Plot decomposition
+            fig, axes = plt.subplots(4, 1, figsize=(12, 8))
+            
+            result.observed.plot(ax=axes[0], title='Observed')
+            result.trend.plot(ax=axes[1], title='Trend')
+            result.seasonal.plot(ax=axes[2], title='Seasonal')
+
+            # Residuals as scatter points
+            axes[3].scatter(df.index, result.resid, color='red', s=10)  # Red points with size 10
+            axes[3].set_title('Residuals')
+
+            plt.suptitle(f'Additive Seasonal Decomposition for {selected_column}', fontsize=14)
+            plt.tight_layout()
+            plt.show()
+
+    # Attach function to dropdown changes
+    dropdown.observe(update_graph, names='value')
+
+    # Display widgets
+    display(dropdown, output)
+
+    # Initial plot
+    update_graph(None)
+
+# Subplots of line plots - resource prices
+def resource_prices(market_data_resampled, resources_prices):
+    fig = make_subplots(
+        rows=len(resources_prices),
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.08,
+        subplot_titles=resources_prices
+    )
+
+    for i, resource in enumerate(resources_prices):
+        fig.add_trace(
+            go.Scatter(
+                x=market_data_resampled.index,
+                y=market_data_resampled[resource],
+                mode='lines',
+                name=resource
+            ),
+            row=i+1,
+            col=1
+        )
+        fig.update_yaxes(
+            range=[0, market_data_resampled[resource].max()],
+            row=i+1,
+            col=1
+        )
+
+    fig.update_layout(
+        title="Resource Prices Over Time (2004-2022)",
+        xaxis_title='Year',
+        yaxis_title='Price',
+        height=1000,
+        showlegend=False
+    )
+
+    fig.update_xaxes(showticklabels=True, row=len(resources_prices), col=1)
+    for i in range(len(resources_prices)-1):
+        fig.update_xaxes(showticklabels=True, row=i+1, col=1)
+
+    fig.show()
+
+
+# Outliers
+def plot_distribution_and_boxplot(df, column_name, n_bins, out_left=None, out_right=None, color=f.main_color):
+    """
+    Plots the histogram and box plot for a specific column with optional outlier boundaries.
+
+    Parameters:
+        df (pd.DataFrame): The DataFrame containing the data.
+        column_name (str): Column to visualize.
+        n_bins (int): Number of bins for the histogram.
+        out_left (float, optional): Left boundary to exclude outliers. If None, no line is drawn.
+        out_right (float, optional): Right boundary to exclude outliers. If None, no line is drawn.
+        color (str): Plot color.
+    """
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+    # Histogram
+    sns.histplot(df[column_name], kde=True, bins=n_bins, color=color, ax=axes[0])
+    axes[0].set_title(f"Distribution of {column_name}")
+    axes[0].set_xlabel(column_name)
+    axes[0].set_ylabel("Frequency")
+
+    # Boxplot
+    sns.boxplot(x=df[column_name], color=color, ax=axes[1])
+    axes[1].set_title(f"Boxplot of {column_name}")
+    axes[1].set_xlabel(column_name)
+
+    # Add vertical lines for outlier boundaries in the boxplot only if values are provided
+    if out_left is not None:
+        axes[1].axvline(x=out_left, color='red', linestyle='-', linewidth=1)
+    if out_right is not None:
+        axes[1].axvline(x=out_right, color='red', linestyle='-', linewidth=1)
+
+    plt.tight_layout()
     plt.show()
