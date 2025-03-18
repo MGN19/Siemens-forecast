@@ -496,3 +496,39 @@ def resource_prices(market_data_resampled, resources_prices):
         fig.update_xaxes(showticklabels=True, row=i+1, col=1)
 
     fig.show()
+
+
+# Outliers
+def plot_distribution_and_boxplot(df, column_name, n_bins, out_left=None, out_right=None, color=f.main_color):
+    """
+    Plots the histogram and box plot for a specific column with optional outlier boundaries.
+
+    Parameters:
+        df (pd.DataFrame): The DataFrame containing the data.
+        column_name (str): Column to visualize.
+        n_bins (int): Number of bins for the histogram.
+        out_left (float, optional): Left boundary to exclude outliers. If None, no line is drawn.
+        out_right (float, optional): Right boundary to exclude outliers. If None, no line is drawn.
+        color (str): Plot color.
+    """
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+    # Histogram
+    sns.histplot(df[column_name], kde=True, bins=n_bins, color=color, ax=axes[0])
+    axes[0].set_title(f"Distribution of {column_name}")
+    axes[0].set_xlabel(column_name)
+    axes[0].set_ylabel("Frequency")
+
+    # Boxplot
+    sns.boxplot(x=df[column_name], color=color, ax=axes[1])
+    axes[1].set_title(f"Boxplot of {column_name}")
+    axes[1].set_xlabel(column_name)
+
+    # Add vertical lines for outlier boundaries in the boxplot only if values are provided
+    if out_left is not None:
+        axes[1].axvline(x=out_left, color='red', linestyle='-', linewidth=1)
+    if out_right is not None:
+        axes[1].axvline(x=out_right, color='red', linestyle='-', linewidth=1)
+
+    plt.tight_layout()
+    plt.show()
