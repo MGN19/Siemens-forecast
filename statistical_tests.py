@@ -4,6 +4,7 @@ import pandas as pd
 from statsmodels.tsa.stattools import grangercausalitytests
 import matplotlib.pyplot as plt
 from statsmodels.tsa.seasonal import STL
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
@@ -21,47 +22,6 @@ def adf_test(df, columns):
         }
     
     return pd.DataFrame(results).T
-
-
-# Granger Causality Test
-def granger_causality_test(data, target_column, max_lag=4, threshold=0.05):
-    """
-    Performs Granger Causality Test for every column in the dataset with respect to a target column.
-    
-    Parameters:
-    - data: DataFrame containing the time series data.
-    - target_column: The column to test Granger causality against.
-    - max_lag: The maximum lag to consider for the test (default is 4).
-    - threshold: The p-value threshold to classify causality ("Yes" or "No").
-    
-    Returns:
-    - DataFrame: A DataFrame with Granger causality results for each column.
-    """
-    granger_results = {}
-
-    for column in data.columns:
-        if column != target_column:
-            # Perform Granger causality test between column and target column
-            test_result = grangercausalitytests(data[[column, target_column]], max_lag, verbose=False)
-
-            # Initialize dictionary to store results ("Yes" or "No" based on p-value)
-            causality_results = {}
-
-            # Loop over the lags and check p-value
-            for lag, test_results in test_result.items():
-                # Access p-value for the SSR chi-square test (or another test)
-                p_value = test_results[0]['ssr_chi2test'][1]  # Extract p-value from the chi-squared test
-                
-                # If p-value is below threshold, store "Yes", else "No"
-                causality_results[lag] = "Yes" if p_value < threshold else "No"
-            
-            # Store the results for the current column
-            granger_results[column] = causality_results
-
-    # Convert the results to a DataFrame for easier interpretation
-    granger_df = pd.DataFrame(granger_results)
-
-    return granger_df
 
 
 # STL Decomposition
@@ -96,3 +56,61 @@ def stl_decomposition(df, columns, seasonal_period=12):
 
         # Show the figure
         fig.show()
+
+def outliers_stationarity(df):
+    """
+    Performs stationarity analysis on a time series DataFrame.
+    
+    For each column:
+    - Conducts the Augmented Dickey-Fuller (ADF) test.
+    - Plots the original series with Plotly.
+    - Plots the Autocorrelation Function (ACF) with Matplotlib.
+    - Plots the Partial Autocorrelation Function (PACF) with Matplotlib.
+    """
+
+    for column in df.columns:
+        # Perform ADF test
+        result = adfuller(df[column].dropna())  # Drop NaN values for ADF test
+        adf_statistic, p_value = result[0], result[1]
+
+        # Print results
+        print(f'Results for {column}: | ADF Statistic: {adf_statistic:.6f} | p-value: {p_value:.6f}')
+
+        # ---- PLOTLY Time Series Plot ----
+        fig_ts = go.Figure()
+
+        fig_ts.add_trace(go.Scatter(
+            x=df.index, 
+            y=df[column], 
+            mode='lines', 
+            name=column,
+            line=dict(color='blue')
+        ))
+
+        fig_ts.update_layout(
+            title=f"ADF test for ({column})",
+            xaxis_title="Time",
+            yaxis_title="Value",
+            xaxis=dict(showgrid=False, tickangle=45),
+            yaxis=dict(showgrid=True),
+            template="plotly_white"
+        )
+
+        fig_ts.show()
+
+        # Determine number of lags dynamically
+        n = len(df[column].dropna())
+        lags = max(1, min(n // 4, 40))
+
+        # ---- Matplotlib for ACF & PACF ----
+        fig, axes = plt.subplots(1, 2, figsize=(18, 5))
+
+        # ACF Plot
+        plot_acf(df[column], ax=axes[0], lags=lags)
+        axes[0].set_title(f'Autocorrelation (ACF) ({column})')
+
+        # PACF Plot
+        plot_pacf(df[column], ax=axes[1], lags=lags)
+        axes[1].set_title(f'Partial Autocorrelation (PACF) ({column})')
+
+        plt.show()
