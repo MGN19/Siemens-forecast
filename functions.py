@@ -577,16 +577,19 @@ def count_holidays_in_month(data, year, month):
     holidays_in_month = [day for day in german_holidays if day.year == year and day.month == month]
     return len(holidays_in_month)
 
-def create_lag_features(df, lag_dict):
-    df = df.copy()  # Work on a copy of the original DataFrame
-    
+def create_lag_features(df, lag_dict):    
     # Create lag features for each product
     for product, lags in lag_dict.items():
         for lag in lags:
             df[f"{product}_Lag_{lag}"] = df[product].shift(lag)
     
-    # Drop rows where there are missing values for any individual product's lag feature
-    for product in lag_dict.keys():
-        df = df.dropna(subset=[f"{product}_Lag_{lag}" for lag in lag_dict[product]])
-    
+    return df
+
+def create_rolling_mean_features(df, roll_dict):
+
+    for product, windows in roll_dict.items():
+        if product in df.columns:
+            for window in windows:
+                df[f"{product}_RollingMean_{window}"] = df[product].rolling(window).mean()
+
     return df
