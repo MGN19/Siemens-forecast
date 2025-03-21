@@ -11,7 +11,8 @@ from matplotlib.ticker import MaxNLocator, FuncFormatter
 import ipywidgets as widgets
 from statsmodels.tsa.seasonal import seasonal_decompose
 from IPython.display import display, clear_output
-
+import matplotlib.ticker as ticker
+import matplotlib.dates as mdates 
 
 main_color = '#009C8C'
 
@@ -75,7 +76,7 @@ def create_time_features_from_date(df, date_column="DATE"):
 
     return df
 
-# Visualizations
+#### Visualizations
 def plot_nr_sales_by_day_of_week(sales_by_date, date_column="DATE", sales_column="Sales_EUR", color=main_color):
     # Plot the distribution of sales by day of the week with specified color
     plt.figure(figsize=(12, 5))
@@ -102,6 +103,46 @@ def plot_total_sales_by_day_of_week(sales_data, date_column="DATE", sales_column
     plt.ylabel("Total Sales (EUR)")
     plt.show()
 
+# Function to format tick labels as normal numbers (no scientific notation)
+def normal_format(x, pos):
+    return f'{x:,.0f}'  # Format with thousands separator and no decimal places
+
+formatter = ticker.FuncFormatter(normal_format)
+
+def plot_sales_data(new_monthly_sales):
+    """
+    Function to plot sales data as a line plot and histogram for each product.
+    """
+    for product, sales_data in new_monthly_sales.items():
+        dates = sales_data.index  
+
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 4), facecolor='white') 
+
+        # Convert sales data to numpy array
+        sales_array = np.array(sales_data, dtype=float)
+
+        # Mask 0s 
+        masked_sales = np.ma.masked_equal(sales_array, 0)
+
+        # Line plot
+        ax1.plot(dates, masked_sales, marker='o', linestyle='-', linewidth=2, markersize=5, color=main_color)  
+        ax1.set_title(f'{product} - Line Plot', fontsize=12, fontweight='bold')
+        ax1.yaxis.set_major_formatter(formatter) 
+        ax1.xaxis.set_major_locator(mdates.MonthLocator(interval=6))
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))  
+        ax1.tick_params(axis='x', rotation=20, labelsize=10)  
+        ax1.grid(True, linestyle='--', alpha=0.7)  
+
+        # Histogram 
+        ax2.hist(sales_data, bins=10, color=main_color, edgecolor='black', alpha=0.75)  
+        ax2.set_title(f'{product} - Histogram', fontsize=12, fontweight='bold')
+        ax2.xaxis.set_major_formatter(formatter)  
+        ax2.tick_params(axis='x', rotation=20, labelsize=10)  
+        ax2.grid(True, linestyle='--', alpha=0.7)  
+
+        plt.subplots_adjust(wspace=0.4)  
+        plt.tight_layout()  
+        plt.show()
 
 # Histogram subplots
 def plot_boxplots(pivoted_data, num_rows=5, num_cols=3, box_color=main_color):
