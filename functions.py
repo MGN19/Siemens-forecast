@@ -585,8 +585,4 @@ def create_lag_features(df, lag_dict):
         for lag in lags:
             df[f"{product}_Lag_{lag}"] = df[product].shift(lag)
     
-    # Drop rows where there are missing values for any individual product's lag feature
-    for product in lag_dict.keys():
-        df = df.dropna(subset=[f"{product}_Lag_{lag}" for lag in lag_dict[product]])
-    
     return df
