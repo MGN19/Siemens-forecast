@@ -272,6 +272,11 @@ def plot_stacked_bar(yearly_data):
 
     ax.yaxis.set_major_formatter(FuncFormatter(comma_format))
 
+    # Add total sum on top of each bar
+    bar_totals = yearly_data.sum(axis=1)
+    for i, total in enumerate(bar_totals):
+        ax.text(i, total + (total * 0.02), f'{total:,.0f}', ha='center', fontsize=12, color='black')
+
     plt.tight_layout()
     plt.show()
 
