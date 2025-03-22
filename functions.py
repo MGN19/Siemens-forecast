@@ -144,6 +144,48 @@ def plot_sales_data(new_monthly_sales):
         plt.tight_layout()  
         plt.show()
 
+# Sales line plot
+def sales_data_line(sales_data, rows=5, cols=3, title="Sales of each product category"):
+    """
+    Generates a subplot grid for sales data with missing sales (0 values) excluded from the line plot.
+    """
+    # Create a subplot grid
+    fig = make_subplots(rows=rows, cols=cols, subplot_titles=sales_data.columns)
+
+    # Get index and columns
+    index_values = sales_data.index
+    columns = sales_data.columns
+
+    # Loop through each column and add a trace
+    for i, column in enumerate(columns):
+        row = (i // cols) + 1
+        col = (i % cols) + 1
+
+        # Replace zero sales with None to prevent plotting unwanted lines
+        y_values = [val if val > 0 else None for val in sales_data[column]]
+
+        fig.add_trace(
+            go.Scatter(
+                x=index_values, 
+                y=y_values, 
+                line=dict(dash='dot', color='black'), 
+                marker=dict(color='black', size=4),
+                name=column
+            ),
+            row=row,
+            col=col
+        )
+
+    # Update layout
+    fig.update_layout(
+        height=1200, width=900,  
+        showlegend=False,  
+        title_text=title,
+    )
+
+    # Show figure
+    fig.show()
+
 # Histogram subplots
 def plot_boxplots(pivoted_data, num_rows=5, num_cols=3, box_color=main_color):
     num_plots = num_rows * num_cols
@@ -163,7 +205,7 @@ def plot_boxplots(pivoted_data, num_rows=5, num_cols=3, box_color=main_color):
         )
     
     fig.update_layout(
-        title='Total sales of each product',
+        title='Total sales revenue of each product',
         height=800,
         width=1100,
         showlegend=False
@@ -203,7 +245,7 @@ def plot_high_correlation_pairs(pivoted_data, threshold=0.50, num_cols=5):
 def plot_stacked_bar(yearly_data):
     sns.set_style("whitegrid")
     colors = sns.color_palette("husl", n_colors=14)
-    fig, ax = plt.subplots(figsize=(14, 8))
+    fig, ax = plt.subplots(figsize=(12, 6))
 
     yearly_data.plot(kind="bar", stacked=True, ax=ax, color=colors, edgecolor="black", linewidth=0.6, zorder=2)
     ax.grid(False)
@@ -213,7 +255,7 @@ def plot_stacked_bar(yearly_data):
     ax.set_xlabel("Year", fontsize=16, fontweight="bold", labelpad=15)
     ax.set_ylabel("Value", fontsize=16, fontweight="bold", labelpad=15)
     ax.set_title("Sales per product per year", fontsize=18, fontweight="bold", pad=20)
-    plt.xticks(rotation=45, ha="right", fontsize=12, weight="bold")
+    plt.xticks(rotation=0, ha="right", fontsize=12)
 
     ax.legend(title="Categories", bbox_to_anchor=(1.05, 1), loc="upper left", fontsize=12, title_fontsize=14, frameon=True, facecolor='white', edgecolor='black')
 
@@ -221,13 +263,12 @@ def plot_stacked_bar(yearly_data):
         rect.set_zorder(1)
         rect.set_edgecolor('black')
 
-    # Disable scientific notation on y-axis and use normal formatting
-    ax.yaxis.set_major_locator(MaxNLocator(integer=True))  # Force integer formatting
-    ax.ticklabel_format(style='plain', axis='y')  # Disable scientific notation on y-axis
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))  
+    ax.ticklabel_format(style='plain', axis='y')  
 
     # Add comma as thousands separator to y-axis values
     def comma_format(x, pos):
-        return f'{x:,.0f}'  # Format the number with commas
+        return f'{x:,.0f}'  
 
     ax.yaxis.set_major_formatter(FuncFormatter(comma_format))
 
@@ -319,23 +360,22 @@ def percentage_change(monthly_sales_resampled, num_rows=5, num_cols=3):
         row = i // num_cols + 1
         col = i % num_cols + 1
         
-        # Calculate percentage change considering the sign of sales from the previous month
-        previous_month_sales = monthly_sales_resampled[product].shift(1)  # Sales from the previous month
+        # Calculate percentage change
+        previous_month_sales = monthly_sales_resampled[product].shift(1)
         percentage_change = ((monthly_sales_resampled[product] - previous_month_sales) / previous_month_sales) * 100
         
         # Add the trace to the subplot
-        fig.add_trace(go.Scatter(x=monthly_sales_resampled.index, y=percentage_change, mode='lines', name=product),
+        fig.add_trace(go.Scatter(x=monthly_sales_resampled.index, y=percentage_change, mode='lines', name=product, line=dict(color=main_color)),
                       row=row, col=col)
         
-        # Update the y-axis title for each subplot
         fig.update_yaxes(title_text=f"Change (%) - {product}", row=row, col=col)
 
     # Update layout and title for the figure
     fig.update_layout(
-        height=1000, 
-        width=1450, 
+        height=900, 
+        width=1200, 
         title_text="Percentage Change in Sales for Each Product",
-        showlegend=False
+        showlegend=False,
     )
 
     # Show the plot
@@ -352,14 +392,14 @@ def percentage_change_previous_month(monthly_sales_resampled, num_rows=5, num_co
         row = i // num_cols + 1
         col = i % num_cols + 1
         
-        fig.add_trace(go.Scatter(x=monthly_sales_resampled.index, y=percentage_change_df[product], mode='lines', name=product),
+        fig.add_trace(go.Scatter(x=monthly_sales_resampled.index, y=percentage_change_df[product], mode='lines', name=product, line=dict(color=main_color)),
                       row=row, col=col)
         
         fig.update_yaxes(title_text=f"Change (%) - {product}", row=row, col=col)
 
     fig.update_layout(
-        height=1000, 
-        width=1450, 
+        height=900, 
+        width=1200, 
         title_text="Percentage change in sales for each product compared to the same month of previous year",
         showlegend=False
     )
@@ -498,7 +538,7 @@ def additive_seasonal_decomposition(df, excluded_columns=None, period=12):
     update_graph(None)
 
 # Subplots of line plots - resource prices
-def resource_prices(market_data_resampled, resources_prices):
+def resource_prices(market_data_resampled, resources_prices, title="Resource Prices Over Time (2004-2022)"):
     fig = make_subplots(
         rows=len(resources_prices),
         cols=1,
@@ -524,8 +564,20 @@ def resource_prices(market_data_resampled, resources_prices):
             col=1
         )
 
+        # Add a red dotted line at y=100 in each subplot
+        fig.add_shape(
+            type='line',
+            x0=market_data_resampled.index.min(),
+            x1=market_data_resampled.index.max(),
+            y0=100,
+            y1=100,
+            line=dict(color='red', width=2, dash='dot'),
+            row=i+1,
+            col=1
+        )
+
     fig.update_layout(
-        title="Resource Prices Over Time (2004-2022)",
+        title=title,  # Use the provided title or default one
         xaxis_title='Year',
         yaxis_title='Price',
         height=1000,
@@ -538,6 +590,211 @@ def resource_prices(market_data_resampled, resources_prices):
 
     fig.show()
 
+
+def plot_prod_ship_index(prod_ship_index):
+    rows, cols = 6, 3
+    fig = make_subplots(rows=rows, cols=cols, subplot_titles=prod_ship_index.columns)
+    columns = prod_ship_index.columns
+    index_values = prod_ship_index.index
+
+    for i, column in enumerate(columns):
+        row = (i // cols) + 1
+        col = (i % cols) + 1
+        max_value = prod_ship_index[column].max()
+
+        fig.add_trace(
+            go.Scatter(
+                x=index_values, 
+                y=prod_ship_index[column], 
+                mode='lines', 
+                line=dict(color=main_color), 
+                name=column
+            ),
+            row=row,
+            col=col
+        )
+
+        fig.update_yaxes(range=[0, max_value], row=row, col=col)
+
+    for r in range(1, rows + 1):
+        for c in range(1, cols + 1):
+            fig.add_shape(
+                go.layout.Shape(
+                    type="line",
+                    x0=index_values[0], x1=index_values[-1],
+                    y0=100, y1=100,
+                    line=dict(color="red", width=2, dash="dot"),
+                    xref=f"x{(r-1)*cols + c}",  
+                    yref=f"y{(r-1)*cols + c}",
+                )
+            )
+
+    fig.update_layout(
+        height=1400, width=1100,
+        showlegend=False,
+        title_text="Production and Shipping Index",
+    )
+
+    fig.show()
+
+
+def plot_filtered_prod_ship_index(prod_ship_index):
+    rows, cols = 6, 3
+    fig = make_subplots(rows=rows, cols=cols, subplot_titles=prod_ship_index.columns)
+    columns = prod_ship_index.columns
+    index_values = prod_ship_index.index
+    years = index_values.year
+    filtered_index = index_values[(years >= 2018) & (years <= 2022)]
+
+    for i, column in enumerate(columns):
+        row = (i // cols) + 1
+        col = (i % cols) + 1
+        max_value = prod_ship_index.loc[filtered_index, column].max()
+
+        fig.add_trace(
+            go.Scatter(
+                x=filtered_index,
+                y=prod_ship_index.loc[filtered_index, column], 
+                mode='lines',
+                line=dict(dash='dot', color=main_color),
+                name=column
+            ),
+            row=row,
+            col=col
+        )
+
+        fig.update_yaxes(range=[0, max_value + 100], row=row, col=col)
+
+    for r in range(1, rows + 1):
+        for c in range(1, cols + 1):
+            fig.add_shape(
+                go.layout.Shape(
+                    type="line",
+                    x0=filtered_index.min(), x1=filtered_index.max(),
+                    y0=100, y1=100,
+                    line=dict(color="red", width=2, dash="dot"),
+                    xref=f"x{(r-1)*cols + c}",
+                    yref=f"y{(r-1)*cols + c}",
+                )
+            )
+
+    fig.update_layout(
+        height=1400, width=1100,
+        showlegend=False,
+        title_text="Production and Shipping Index (2018-2022)",
+        xaxis=dict(range=[filtered_index.min(), filtered_index.max()], title="Year"),
+    )
+
+    fig.show()
+
+def plot_production_index(production_data, production_columns):
+    traces = []
+
+    for country in production_columns:
+        trace = go.Scatter(
+            x=production_data.index,  
+            y=production_data[country],  
+            mode='lines', 
+            name=country 
+        )
+        traces.append(trace)
+
+    layout = go.Layout(
+        title="Production Index Over Time by Country",
+        xaxis=dict(title='Year'),
+        yaxis=dict(title='Production Index'),
+    )
+
+    fig = go.Figure(data=traces, layout=layout)
+    fig.show()
+
+def plot_shipment_index(shipment_data, shipment_columns):
+    traces = []
+
+    for country in shipment_columns:
+        trace = go.Scatter(
+            x=shipment_data.index,  
+            y=shipment_data[country],  
+            mode='lines', 
+            name=country 
+        )
+        traces.append(trace)
+
+    layout = go.Layout(
+        title="Shipment Index Over Time by Country",
+        xaxis=dict(title='Year'),
+        yaxis=dict(title='Shipment Index'),
+    )
+
+    fig = go.Figure(data=traces, layout=layout)
+    fig.show()
+
+def plot_producer_price(producer_price_data, producer_prices):
+    traces = []
+
+    for country in producer_prices:
+        trace = go.Scatter(
+            x=producer_price_data.index,  
+            y=producer_price_data[country],  
+            mode='lines', 
+            name=country 
+        )
+        traces.append(trace)
+
+    layout = go.Layout(
+        title="Producer Price Over Time by Country",
+        xaxis=dict(title='Year'),
+        yaxis=dict(title='Production Price'),
+    )
+
+    fig = go.Figure(data=traces, layout=layout)
+    fig.show()
+
+def plot_me_index(me_index_data, me_index):
+    traces = []
+
+    for country in me_index:
+        country_data = me_index_data[country].dropna()
+
+        trace = go.Scatter(
+            x=country_data.index,  
+            y=country_data,  
+            mode='lines', 
+            name=country 
+        )
+        traces.append(trace)
+
+    layout = go.Layout(
+        title="Machinery & Equipment Index Over Time by Country",
+        xaxis=dict(title='Year'),
+        yaxis=dict(title='Index'),
+    )
+
+    fig = go.Figure(data=traces, layout=layout)
+    fig.show()
+
+def plot_ee_index(ee_index_data, ee_index):
+    traces = []
+
+    for country in ee_index:
+        country_data = ee_index_data[country].dropna()
+
+        trace = go.Scatter(
+            x=country_data.index,  
+            y=country_data,  
+            mode='lines', 
+            name=country 
+        )
+        traces.append(trace)
+
+    layout = go.Layout(
+        title="Electronic Index Over Time by Country",
+        xaxis=dict(title='Year'),
+        yaxis=dict(title='Index'),
+    )
+
+    fig = go.Figure(data=traces, layout=layout)
+    fig.show()
 
 # Outliers
 def plot_distribution_and_boxplot(df, column_name, n_bins, out_left=None, out_right=None, color=main_color):
