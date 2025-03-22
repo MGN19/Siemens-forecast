@@ -538,7 +538,7 @@ def additive_seasonal_decomposition(df, excluded_columns=None, period=12):
     update_graph(None)
 
 # Subplots of line plots - resource prices
-def resource_prices(market_data_resampled, resources_prices):
+def resource_prices(market_data_resampled, resources_prices, title="Resource Prices Over Time (2004-2022)"):
     fig = make_subplots(
         rows=len(resources_prices),
         cols=1,
@@ -571,13 +571,13 @@ def resource_prices(market_data_resampled, resources_prices):
             x1=market_data_resampled.index.max(),
             y0=100,
             y1=100,
-            line=dict(color='red', width=2, dash='dot'),  # Dash style set to 'dot'
+            line=dict(color='red', width=2, dash='dot'),
             row=i+1,
             col=1
         )
 
     fig.update_layout(
-        title="Resource Prices Over Time (2004-2022)",
+        title=title,  # Use the provided title or default one
         xaxis_title='Year',
         yaxis_title='Price',
         height=1000,
@@ -589,6 +589,7 @@ def resource_prices(market_data_resampled, resources_prices):
         fig.update_xaxes(showticklabels=True, row=i+1, col=1)
 
     fig.show()
+
 
 def plot_prod_ship_index(prod_ship_index):
     rows, cols = 6, 3
