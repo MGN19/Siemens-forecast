@@ -896,3 +896,27 @@ def create_rolling_mean_features(df, roll_dict):
                 df[f"{product}_RollingMean_{window}"] = df[product].rolling(window).mean()
 
     return df
+
+
+def plot_imputation(df_with_missing, df_no_missing, cols_with_missing):
+
+    for var in cols_with_missing:
+        plt.figure(figsize=(14, 6))
+
+        # Plot the full continuous line — including both original and imputed values
+        plt.plot(df_no_missing.index, df_no_missing[var], 
+                 color=f.main_color, 
+                 label='Line (with imputed values)', zorder=3)
+
+        # Highlight the imputed points on top of that line
+        missing_idx = df_with_missing[var].isna()
+        plt.scatter(df_no_missing.index[missing_idx],
+                    df_no_missing.loc[missing_idx, var],
+                    color='red', label='Imputed Points', zorder=4, marker='x', s=70)
+
+        plt.xlabel('Time')
+        plt.ylabel(var)
+        plt.legend()
+        plt.title(f'Original vs Imputed Values Over Time for \"{var}\"')
+        plt.grid(True)
+        plt.show()
