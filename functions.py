@@ -846,13 +846,13 @@ def get_semester(month):
 # Create Quarter column
 def get_quarter(month):
     if month in [1, 2, 3]:
-        return 'Q1'  # Quarter 1 (January to March)
+        return 1  # Quarter 1 (January to March)
     elif month in [4, 5, 6]:
-        return 'Q2'  # Quarter 2 (April to June)
+        return 2  # Quarter 2 (April to June)
     elif month in [7, 8, 9]:
-        return 'Q3'  # Quarter 3 (July to September)
+        return 3  # Quarter 3 (July to September)
     else:
-        return 'Q4'  # Quarter 4 (October to December)
+        return 4  # Quarter 4 (October to December)
     
 def count_weekends_in_month(year, month):
     # Generate all the dates for the given month
