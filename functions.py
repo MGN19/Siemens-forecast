@@ -905,7 +905,7 @@ def plot_imputation(df_with_missing, df_no_missing, cols_with_missing):
 
         # Plot the full continuous line — including both original and imputed values
         plt.plot(df_no_missing.index, df_no_missing[var], 
-                 color=f.main_color, 
+                 color=main_color, 
                  label='Line (with imputed values)', zorder=3)
 
         # Highlight the imputed points on top of that line
