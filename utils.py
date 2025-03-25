@@ -97,5 +97,19 @@ rename_dict_clean = {
     'Italy': 'Clean_Ita',
     'Switzerland': 'Clean_Swi',
     'United Kingdom': 'Clean_UK',
-    'United States': 'Covid_US'
+    'United States of America': 'Clean_US'
+}
+
+rename_dict_fossil = {
+    'China': 'Fossil_Chi',
+    'France': 'Fossil_Fra',
+    'Germany': 'Fossil_Ger',
+    'Italy': 'Fossil_Ita',
+    'Switzerland': 'Fossil_Swi',
+    'United Kingdom': 'Fossil_UK',
+    'United States of America': 'Fossil_US'
+}
+
+rename_dict_buildings = {
+    'Buildings Number': 'Buildings_Ger'
 }
