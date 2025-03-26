@@ -1,5 +1,13 @@
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler
 import pandas as pd
+import numpy as np
+from sklearn.feature_selection import RFECV
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression, LassoCV
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 
 # Train-Validation Split
 def train_val_split(df, target_cols, val_percentage):
@@ -68,3 +76,132 @@ def scale_data(X_train, X_val, scaler_type='minmax'):
     X_val_scaled = pd.DataFrame(X_val_scaled, columns=X_val.columns, index=X_val.index)
     
     return X_train_scaled, X_val_scaled
+
+# Feature Selection
+def correlation(X_train, corr_threshold=0.85, plot=False):
+    corr_matrix = X_train.corr()
+    upper_triangle = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
+    correlated_features = {column for column in upper_triangle.columns if any(upper_triangle[column].abs() > corr_threshold)}
+    selected_features = [col for col in X_train.columns if col not in correlated_features]
+    
+    print(f'Selected {len(selected_features)} features by correlation')
+
+    if plot:
+        plt.figure(figsize=(12, 8))
+
+        # Mask the upper triangle
+        mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
+
+        # Create a heatmap
+        sns.heatmap(corr_matrix, mask=mask, annot=False, cmap='coolwarm', fmt=".2f", linewidths=0.5)
+
+        plt.title(f'Feature Correlation Matrix (Threshold = {corr_threshold})')
+        plt.show()
+
+    return selected_features
+
+def rfe(X_train, y_train, rfe_model=None, plot=False):
+    if rfe_model is None:
+        rfe_model = LinearRegression()
+    
+    rfecv = RFECV(estimator=rfe_model, cv=10, scoring='neg_root_mean_squared_error')
+    rfecv.fit(X_train, y_train)
+    selected_features = X_train.columns[rfecv.support_].tolist()
+    print(f'Selected {len(selected_features)} features by RFECV')
+
+    if plot:
+        num_features = np.arange(1, len(rfecv.cv_results_['mean_test_score'])+ 1)
+        rmse_scores = np.abs(rfecv.cv_results_['mean_test_score'])
+
+        plt.figure(figsize=(10, 5))
+        plt.plot(num_features, rmse_scores, marker='o', linestyle='-')
+        plt.axvline(x=len(selected_features), color='r', linestyle='--', label=f'Optimal: {len(selected_features)} features')
+        plt.xlabel("Number of Features Selected")
+        plt.ylabel("Root Mean Squared Error (RMSE)")
+        plt.title("RFECV: Number of Features vs. RMSE")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+    return selected_features
+
+def feature_importance(X_train, y_train, importance_threshold='mean', plot=False):
+    model = RandomForestRegressor()
+    model.fit(X_train, y_train)
+    importances = model.feature_importances_
+
+    # Determine the threshold value
+    if importance_threshold == 'mean':
+        threshold_value = np.mean(importances)
+    elif importance_threshold == 'median':
+        threshold_value = np.median(importances)
+    else:
+        threshold_value = float(importance_threshold)
+
+    selected_features = X_train.columns[importances > threshold_value].tolist()
+    print(f'Selected {len(selected_features)} features by importance with threshold {threshold_value}')
+
+    if plot:
+        plt.figure(figsize=(12, 6))
+
+        # Sort features by importance
+        sorted_indices = np.argsort(importances)[::-1]  
+        sorted_features = X_train.columns[sorted_indices]
+        sorted_importances = importances[sorted_indices]
+
+        plt.bar(sorted_features[:20], sorted_importances[:20]) 
+        plt.xticks(rotation=90)
+        plt.xlabel("Features")
+        plt.ylabel("Feature Importance Score")
+        plt.title("Feature Importance Based on Random Forest")
+        plt.show()
+
+    return selected_features
+
+def lasso_(X_train, y_train, plot=False):
+    lasso = LassoCV(cv=10, random_state=42).fit(X_train, y_train)
+    selected_features = X_train.columns[lasso.coef_ != 0].tolist()
+    
+    print(f'Selected {len(selected_features)} features by Lasso regularization')
+
+    if plot:
+        plt.figure(figsize=(12, 6))
+
+        # Sort features by absolute coefficient values
+        coef_values = lasso.coef_
+        sorted_indices = np.argsort(np.abs(coef_values))[::-1]  # Descending order
+        sorted_features = X_train.columns[sorted_indices]
+        sorted_coefs = coef_values[sorted_indices]
+
+        plt.bar(sorted_features[:20], sorted_coefs[:20])  # Plot top 20 features
+        plt.xticks(rotation=90)
+        plt.xlabel("Features")
+        plt.ylabel("Lasso Coefficients")
+        plt.title("Feature Importance Based on Lasso Regularization")
+        plt.show()
+
+    return selected_features
+
+def feature_selection(X_train, y_train, method='all', rfe_model=None, 
+                      corr_threshold=0.85, importance_threshold='mean', plot=False):
+    if method == 'correlation':
+        return correlation(X_train, corr_threshold, plot)
+    elif method == 'rfe':
+        return rfe(X_train, y_train, rfe_model, plot)
+    elif method == 'importance':
+        return feature_importance(X_train, y_train, importance_threshold, plot)
+    elif method == 'lasso':
+        return lasso_(X_train, y_train, plot)
+        
+    elif method == 'all':
+        corr_features = set(correlation(X_train, corr_threshold, plot))
+        rfe_features = set(rfe(X_train, y_train, rfe_model, plot))
+        importance_features = set(feature_importance(X_train, y_train, importance_threshold, plot))
+        lasso_features = set(lasso_(X_train, y_train, plot))
+
+        selected_features = list(corr_features & rfe_features & importance_features & lasso_features)
+        print(f'Selected {len(selected_features)} features that intersect across all methods')
+        return selected_features
+        
+    else:
+        raise ValueError("Invalid method. Choose from 'correlation', 'rfe', 'importance', 'lasso', or 'all'.")
