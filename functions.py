@@ -920,15 +920,3 @@ def plot_imputation(df_with_missing, df_no_missing, cols_with_missing):
         plt.title(f'Original vs Imputed Values Over Time for \"{var}\"')
         plt.grid(True)
         plt.show()
-
-def multiple_line_plot(data, y_label, title):
-    # Plot
-    plt.figure(figsize=(12, 6))
-    for column in data.columns:
-        plt.plot(data.index, data[column], label=column)
-
-    plt.xlabel('Date')
-    plt.ylabel(y_label)
-    plt.title(title)
-    plt.legend()
-    plt.show()
