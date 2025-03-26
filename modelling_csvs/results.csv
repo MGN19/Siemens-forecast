@@ -1,0 +1,3 @@
+Features Used,Best Model,RMSE
+USA Shipments Index_Rolling_Mean_3,ARIMA,4074616.165759877
+"USA Shipments Index_Rolling_Mean_3, UK EE Production Index_Rolling_Mean_3",HuberRegressor,2820543.961581114
