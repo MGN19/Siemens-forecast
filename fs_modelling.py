@@ -7,6 +7,13 @@ from sklearn.linear_model import LinearRegression, LassoCV
 
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
+
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from prophet import Prophet
+from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
+
 
 
 # Train-Validation Split
@@ -205,3 +212,123 @@ def feature_selection(X_train, y_train, method='all', rfe_model=None,
         
     else:
         raise ValueError("Invalid method. Choose from 'correlation', 'rfe', 'importance', 'lasso', or 'all'.")
+    
+
+
+# Statistical Models
+def stats_models(model_type, X_train, X_val, y_train, y_val,
+                 order=(1,1,1), seasonal_order=(1,1,1,12), plot=False, csv_path=None):
+
+    """
+    Train and evaluate time series forecasting models (ARIMA, SARIMAX, Prophet).
+    
+    Parameters:
+    ----------
+    model_type : str
+        The type of model to use. Options: 'arima', 'sarimax', or 'prophet'.
+    X_train : pd.DataFrame or None
+        Training features (only used for SARIMAX, ignored for ARIMA and Prophet).
+    X_val : pd.DataFrame or None
+        Validation features (only used for SARIMAX, ignored for ARIMA and Prophet).
+    y_train : pd.Series
+        Training target variable (time series data).
+    y_val : pd.Series
+        Validation target variable (time series data).
+    order : tuple, default=(1,1,1)
+        ARIMA/SARIMAX model parameters (p, d, q) for non-seasonal components.
+    seasonal_order : tuple, default=(1,1,1,12)
+        SARIMAX model parameters (P, D, Q, S) for seasonal components.
+    plot : bool, default=False
+        If True, plots the actual vs. predicted values for the validation set.
+    csv_path : str or None, default=None
+        If specified, appends model performance metrics to the given CSV file.
+    
+    Returns:
+    -------
+    model_fit : statsmodels
+        The trained model object.
+    val_preds : pd.Series
+        Predictions for the validation set.
+    summary : statsmodels summary object or pd.Series
+        Model summary for ARIMA/SARIMAX.
+    """
+
+    train_rmse, val_rmse, train_mape, val_mape = None, None, None, None  
+
+    if model_type == 'arima':
+        model = ARIMA(y_train, order=order)
+        model_fit = model.fit()
+        train_preds = model_fit.fittedvalues
+        val_preds = model_fit.forecast(steps=len(y_val))
+
+    elif model_type == 'sarimax':
+        model = SARIMAX(y_train, order=order, seasonal_order=seasonal_order, exog=X_train)
+        model_fit = model.fit()
+        train_preds = model_fit.fittedvalues
+        val_preds = model_fit.forecast(steps=len(y_val), exog=X_val)
+
+    elif model_type == 'prophet':
+        df_train = y_train.reset_index()
+        df_train.columns = ['ds', 'y']
+        
+        model = Prophet()
+        model.fit(df_train)
+
+        future = pd.DataFrame({'ds': y_val.index})
+        forecast_df = model.predict(future)
+        val_preds = forecast_df.set_index('ds')['yhat']
+
+        train_preds = None
+        model_fit = model
+
+    else:
+        raise ValueError("Invalid model_type. Choose 'arima', 'sarimax', or 'prophet'.")
+
+    # Calculate Error Metrics
+    if train_preds is not None:
+        train_rmse = np.sqrt(mean_squared_error(y_train, train_preds))
+        train_mape = mean_absolute_percentage_error(y_train, train_preds) * 100
+
+    val_rmse = np.sqrt(mean_squared_error(y_val, val_preds))
+    val_mape = mean_absolute_percentage_error(y_val, val_preds) * 100
+
+    # Optional Plot
+    if plot:
+        plt.figure(figsize=(12, 6))
+        plt.plot(y_train.index, y_train, label='Actual Train', color='blue')
+        plt.plot(y_val.index, y_val, label='Actual Validation', color='green')
+        plt.plot(y_val.index, val_preds, label='Predicted Validation', color='red')
+
+        plt.legend()
+        plt.title(f'{model_type.upper()} Model - Training and Validation Predictions')
+        plt.xlabel('Time')
+        plt.xticks(rotation=45)
+        plt.ylabel('Value')
+        plt.show()
+
+    # Collect results
+    results = {
+        "model_type": model_type,
+        "features_used": X_train.columns.tolist() if model_type != 'arima' else "N/A",
+        "train_rmse": train_rmse,
+        "val_rmse": val_rmse,
+        "train_mape (%)": train_mape,
+        "val_mape (%)": val_mape
+    }
+
+    # Save results to CSV if a path is specified
+    if csv_path:
+        results_df = pd.DataFrame([results])  # Convert dict to DataFrame
+        
+        # Check if file exists to determine mode
+        if os.path.exists(csv_path):
+            results_df.to_csv(csv_path, mode='a', header=False, index=False)
+        else:
+            results_df.to_csv(csv_path, mode='w', header=True, index=False)
+        
+        print(f"Results appended to {csv_path}")
+
+    if model_type == 'prophet':
+        return model_fit, val_preds  
+    else:
+        return model_fit, val_preds, model_fit.summary()
