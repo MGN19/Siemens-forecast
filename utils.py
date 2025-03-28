@@ -79,3 +79,37 @@ rename_dict_business = {
     'United Kingdom': 'BC_UK',
     'United States': 'BC_USA'
 }
+
+rename_dict_covid = {
+    'China': 'Covid_Chi',
+    'France': 'Covid_Fra',
+    'Germany': 'Covid_Ger',
+    'Italy': 'Covid_Ita',
+    'Switzerland': 'Covid_Swi',
+    'United Kingdom': 'Covid_UK',
+    'United States': 'Covid_US'
+}
+
+rename_dict_clean = {
+    'China': 'Clean_Chi',
+    'France': 'Clean_Fra',
+    'Germany': 'Clean_Ger',
+    'Italy': 'Clean_Ita',
+    'Switzerland': 'Clean_Swi',
+    'United Kingdom': 'Clean_UK',
+    'United States of America': 'Clean_US'
+}
+
+rename_dict_fossil = {
+    'China': 'Fossil_Chi',
+    'France': 'Fossil_Fra',
+    'Germany': 'Fossil_Ger',
+    'Italy': 'Fossil_Ita',
+    'Switzerland': 'Fossil_Swi',
+    'United Kingdom': 'Fossil_UK',
+    'United States of America': 'Fossil_US'
+}
+
+rename_dict_buildings = {
+    'Buildings Number': 'Buildings_Ger'
+}
