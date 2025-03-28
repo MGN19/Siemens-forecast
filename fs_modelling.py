@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.feature_selection import RFECV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression, LassoCV
+from sklearn.feature_selection import mutual_info_regression
 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -111,7 +112,8 @@ def rfe(X_train, y_train, rfe_model=None, plot=False):
     if rfe_model is None:
         rfe_model = LinearRegression()
     
-    rfecv = RFECV(estimator=rfe_model, cv=10, scoring='neg_root_mean_squared_error')
+    rfecv = RFECV(estimator=rfe_model, cv=10, 
+                  min_features_to_select=20, scoring='neg_root_mean_squared_error')
     rfecv.fit(X_train, y_train)
     selected_features = X_train.columns[rfecv.support_].tolist()
     print(f'Selected {len(selected_features)} features by RFECV')
@@ -189,8 +191,37 @@ def lasso_(X_train, y_train, plot=False):
 
     return selected_features
 
+def mutual_info(X_train, y_train, plot=False, mi_threshold=0.1):
+
+    # Compute mutual information between each feature and the target
+    mutual_info_scores = mutual_info_regression(X_train, y_train)
+    
+    # Create a DataFrame to view feature importance
+    mi_df = pd.DataFrame({'Feature': X_train.columns, 'Mutual Information': mutual_info_scores})
+    
+    # Sort the features by mutual information score
+    mi_df = mi_df.sort_values(by='Mutual Information', ascending=False)
+    
+    # Select features above the threshold
+    selected_features = mi_df[mi_df['Mutual Information'] >= mi_threshold]['Feature'].tolist()
+    
+    print(f'Selected {len(selected_features)} features by Mutual Information')
+
+    if plot:
+        # Plot the mutual information scores for each feature
+        plt.figure(figsize=(10, 6))
+        plt.bar(mi_df['Feature'], mi_df['Mutual Information'])
+        plt.xticks(rotation=90)
+        plt.xlabel("Features")
+        plt.ylabel("Mutual Information")
+        plt.title("Mutual Information of Features with Target")
+        plt.show()
+
+    return selected_features
+
 def feature_selection(X_train, y_train, method='all', rfe_model=None, 
-                      corr_threshold=0.85, importance_threshold='mean', plot=False):
+                      corr_threshold=0.85, importance_threshold='mean', 
+                      mi_threshold=0.1, plot=False):
     if method == 'correlation':
         return correlation(X_train, corr_threshold, plot)
     elif method == 'rfe':
@@ -199,14 +230,17 @@ def feature_selection(X_train, y_train, method='all', rfe_model=None,
         return feature_importance(X_train, y_train, importance_threshold, plot)
     elif method == 'lasso':
         return lasso_(X_train, y_train, plot)
+    elif method == 'mutual_info':
+        return mutual_info(X_train, y_train, plot=False, mi_threshold=mi_threshold)
         
     elif method == 'all':
         corr_features = set(correlation(X_train, corr_threshold, plot))
         rfe_features = set(rfe(X_train, y_train, rfe_model, plot))
         importance_features = set(feature_importance(X_train, y_train, importance_threshold, plot))
-        lasso_features = set(lasso_(X_train, y_train, plot))
+        # lasso_features = set(lasso_(X_train, y_train, plot))
+        mi_features = set(mutual_info(X_train, y_train, plot=False, mi_threshold=mi_threshold))
 
-        selected_features = list(corr_features & rfe_features & importance_features & lasso_features)
+        selected_features = list(corr_features & rfe_features & importance_features & mi_features)
         print(f'Selected {len(selected_features)} features that intersect across all methods')
         return selected_features
         
