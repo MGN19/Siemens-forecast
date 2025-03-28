@@ -12,3 +12,7 @@ sarimax,"['#16_Lag_3', '#12_RollingMean_12', '#12_Lag_3', '#36_Lag_1', '#36_Lag_
 prophet,N/A,,548766.4332126979,,28.00662766425848
 PoissonRegressor,"['#16_Lag_3', '#12_RollingMean_12', '#12_Lag_3', '#36_Lag_1', '#36_Lag_12']",258451.51040905225,719877.1798006883,42.216832879149216,43.71902183741089
 XGBoost,"['#36_Lag_1', 'stock_price_change', 'CHI Production Index', 'SWI Production Index', '#36_Lag_12']",0.10094999889959021,934017.0086331405,1.0881885970093208e-05,48.205795884132385
+SVR,"['#36_Lag_1', 'stock_price_change', 'CHI Production Index', 'SWI Production Index', '#36_Lag_12']",361282.78626798844,993716.0627767297,57.53677599918411,58.14572808944883
+SVR,"['#36_Lag_1', 'stock_price_change', 'CHI Production Index', 'SWI Production Index', '#36_Lag_12']",361282.78626798844,993716.0627767297,57.53677599918411,58.14572808944883
+SVR,"['#36_Lag_1', 'stock_price_change', 'CHI Production Index', 'SWI Production Index', '#36_Lag_12']",361282.78626798844,993716.0627767297,57.53677599918411,58.14572808944883
+SVR,"['#36_Lag_1', 'stock_price_change', 'CHI Production Index', 'SWI Production Index', '#36_Lag_12']",701773.6782595402,1455421.232696305,99.98545675328627,99.99371659179691
