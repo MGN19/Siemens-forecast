@@ -888,12 +888,11 @@ def create_lag_features(df, lag_dict):
     
     return df
 
-def create_rolling_mean_features(df, roll_dict):
-
-    for product, windows in roll_dict.items():
-        if product in df.columns:
-            for window in windows:
-                df[f"{product}_RollingMean_{window}"] = df[product].rolling(window).mean()
+def create_rolling_means(df, windows=[3, 6, 12]):
+    lag_cols = [col for col in df.columns if 'Lag' in col]
+    
+    for window in windows:
+        df[f'RollingMean_{window}'] = df[lag_cols].mean(axis=1)
 
     return df
 
