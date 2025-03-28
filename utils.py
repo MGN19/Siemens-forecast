@@ -165,3 +165,92 @@ rename_dict_buildings = {
  'y_train_3': ['#12_Lag_12', 'Buildings_Ger', 'Fossil_Chi', 'Clean_Fra'],
  'y_train_1': ['Clean_Fra', 'GER Production Index', 'Clean_US'],
  'y_train_14': ['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']}
+
+lag_X_dict = {
+    # Economic & Market Indices
+    "CHI Production Index": [10, 11, 12],
+    "CHI Shipments Index": [10, 11, 12],
+    "FRA Production Index": [10, 11, 12],
+    "FRA Shipments Index": [10, 11, 12],
+    "GER Production Index": [10, 11, 12],
+    "GER Shipments Index": [10, 11, 12],
+    "ITA Production Index": [10, 11, 12],
+    "ITA Shipments Index": [10, 11, 12],
+    "JAP Production Index": [10, 11, 12],
+    "JAP Shipments Index": [10, 11, 12],
+    "SWI Production Index": [10, 11, 12],
+    "SWI Shipments Index": [10, 11, 12],
+    "UK Production Index": [10, 11, 12],
+    "UK Shipments Index": [10, 11, 12],
+    "USA Production Index": [10, 11, 12],
+    "USA Shipments Index": [10, 11, 12],
+    "Europe Production Index": [10, 11, 12],
+    "Europe Shipments Index": [10, 11, 12],
+
+    # Prices of Commodities & Energy
+    "(W) Price of Base Metals": [10, 11, 12],
+    "(W) Price of Energy": [10, 11, 12],
+    "(W) Price of Metals & Minerals": [10, 11, 12],
+    "(W) Price of Natural gas index": [10, 11, 12],
+    "(W) Price of Crude oil, average": [10, 11, 12],
+    "(W) Price of Copper": [10, 11, 12],
+
+    # Currency & Producer Prices
+    "USA EUR to LCU Conversion Rate ": [10, 11, 12],
+    "USA EE Producer Prices": [10, 11, 12],
+    "UK EE Producer Prices": [10, 11, 12],
+    "ITA EE Producer Prices": [10, 11, 12],
+    "FRA EE Producer Prices": [10, 11, 12],
+    "GER EE Producer Prices": [10, 11, 12],
+    "CHI EE Producer Prices": [10, 11, 12],
+
+    # Machinery & Equipment Indices
+    "USA Machinery & Equipment Index": [10, 11, 12],
+    "(W) Machinery & Equipment Index": [10, 11, 12],
+    "SWI Machinery & Equipment Index": [10, 11, 12],
+    "UK Machinery & Equipment Index": [10, 11, 12],
+    "ITA Machinery & Equipment Index": [10, 11, 12],
+    "JAP Machinery & Equipment Index": [10, 11, 12],
+    "FRA Machinery & Equipment Index": [10, 11, 12],
+    "GER Machinery & Equipment Index": [10, 11, 12],
+
+    # Energy & Electricity Production Indices
+    "USA EE Production Index": [10, 11, 12],
+    "(W) EE Production Index": [10, 11, 12],
+    "SWI EE Production Index": [10, 11, 12],
+    "UK EE Production Index": [10, 11, 12],
+    "ITA EE Production Index": [10, 11, 12],
+    "JAP EE Production Index": [10, 11, 12],
+    "FRA EE Production Index": [10, 11, 12],
+    "GER EE Production Index": [10, 11, 12],
+
+    # Stock Data
+    "stock_price": [10, 11, 12],
+    "stock_price_change": [10, 11, 12],
+    "stock_volume": [10, 11, 12],
+
+    # COVID-related Data
+    "Covid_Chi": [10, 11, 12],
+    "Covid_Fra": [10, 11, 12],
+    "Covid_Ger": [10, 11, 12],
+    "Covid_Ita": [10, 11, 12],
+    "Covid_Swi": [10, 11, 12],
+    "Covid_UK": [10, 11, 12],
+    "Covid_US": [10, 11, 12],
+
+    # Clean & Fossil Energy Data
+    "Clean_Chi": [10, 11, 12],
+    "Clean_Fra": [10, 11, 12],
+    "Clean_Ger": [10, 11, 12],
+    "Clean_Ita": [10, 11, 12],
+    "Clean_Swi": [10, 11, 12],
+    "Clean_UK": [10, 11, 12],
+    "Clean_US": [10, 11, 12],
+    "Fossil_Chi": [10, 11, 12],
+    "Fossil_Fra": [10, 11, 12],
+    "Fossil_Ger": [10, 11, 12],
+    "Fossil_Ita": [10, 11, 12],
+    "Fossil_Swi": [10, 11, 12],
+    "Fossil_UK": [10, 11, 12],
+    "Fossil_US": [10, 11, 12],
+}
