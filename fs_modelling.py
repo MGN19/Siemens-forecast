@@ -13,6 +13,8 @@ import os
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from prophet import Prophet
+from sklearn.base import clone
+from lazypredict.Supervised import LazyRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
 
 
@@ -366,3 +368,62 @@ def stats_models(model_type, X_train, X_val, y_train, y_val,
         return model_fit, val_preds  
     else:
         return model_fit, val_preds, model_fit.summary()
+
+
+# Lazy Regressor
+def lazy_regressor(X_train, X_val, target_train, target_val, plot = False, csv_path = None):
+
+    # Fit LazyRegressor
+    regressor = LazyRegressor(ignore_warnings=True)
+    
+    lazy_model, lazy_predictions = regressor.fit(X_train, X_val, target_train, target_val)
+
+    best_model_name = lazy_model["RMSE"].idxmin()
+    best_model_class = regressor.models[best_model_name]
+
+    best_model = clone(best_model_class)
+    best_model.fit(X_train, target_train)
+
+    train_preds = best_model.predict(X_train)
+    val_preds = best_model.predict(X_val)
+    
+    # Metrics
+    train_rmse = np.sqrt(mean_squared_error(target_train, train_preds))
+    train_mape = mean_absolute_percentage_error(target_train, train_preds) * 100
+    
+    val_rmse = np.sqrt(mean_squared_error(target_val, val_preds))  
+    val_mape = mean_absolute_percentage_error(target_val, val_preds) * 100 
+
+    if plot:
+        plt.figure(figsize=(12, 6))
+        plt.plot(target_train.index, target_train, label='Actual Train', color='blue', alpha=0.7)
+        plt.plot(target_val.index, target_val, label='Actual Validation', color='green', alpha=0.7)
+        plt.plot(target_val.index, val_preds, label='Predicted Validation', color='red')
+        plt.legend()
+        plt.title(f'{best_model_name.upper()} Model - Training and Validation Predictions')
+        plt.xlabel('Time')
+        plt.xticks(rotation=45)
+        plt.ylabel('Value')
+        plt.show()
+
+    results = {
+        "model_type": best_model_name,
+        "features_used": X_train.columns.tolist(),
+        "train_rmse": train_rmse,
+        "val_rmse": val_rmse,
+        "train_mape (%)": train_mape,
+        "val_mape (%)": val_mape
+        }
+
+    if csv_path:
+        results_df = pd.DataFrame([results])
+        
+        # Check if file exists to determine mode
+        if os.path.exists(csv_path):
+            results_df.to_csv(csv_path, mode='a', header=False, index=False)
+        else:
+            results_df.to_csv(csv_path, mode='w', header=True, index=False)
+        
+        print(f"Results appended to {csv_path}")
+
+    return best_model, val_preds
