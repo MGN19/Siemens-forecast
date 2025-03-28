@@ -2,3 +2,4 @@ model_type,features_used,train_rmse,val_rmse,train_mape (%),val_mape (%)
 arima,N/A,282071.6729647496,219538.14845908943,202.44009075227814,61.871863229884994
 sarimax,"['Clean_Ita', 'Fossil_Fra', '#20_Lag_1', '#13_RollingMean_3', '#8_Lag_3', 'GER EE Production Index']",523279.4746468491,951824.9657957398,185.60505398573795,270.8962445317849
 prophet,N/A,,246663.55673498174,,47.055467217868106
+sarimax,"['Clean_Ita', 'Fossil_Fra', '#20_Lag_1', '#13_RollingMean_3', '#8_Lag_3', 'GER EE Production Index']",523279.4746468491,951824.9657957398,185.60505398573795,270.8962445317849
