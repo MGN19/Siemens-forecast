@@ -237,7 +237,7 @@ def feature_selection(X_train, y_train, method='all', rfe_model=None,
         corr_features = set(correlation(X_train, corr_threshold, plot))
         rfe_features = set(rfe(X_train, y_train, rfe_model, plot))
         importance_features = set(feature_importance(X_train, y_train, importance_threshold, plot))
-       # lasso_features = set(lasso_(X_train, y_train, plot))
+       # lasso_features = set(lasso_(X_train, y_train, plot)) --> this is purpurposefully commented out
         mi_features = set(mutual_info(X_train, y_train, plot=False, mi_threshold=mi_threshold))
 
         selected_features = list(corr_features & rfe_features & importance_features & mi_features)
@@ -343,7 +343,7 @@ def stats_models(model_type, X_train, X_val, y_train, y_val,
     # Collect results
     results = {
         "model_type": model_type,
-        "features_used": X_train.columns.tolist() if model_type != 'arima' else "N/A",
+        "features_used": X_train.columns.tolist() if model_type == 'sarimax' else "N/A",
         "train_rmse": train_rmse,
         "val_rmse": val_rmse,
         "train_mape (%)": train_mape,
