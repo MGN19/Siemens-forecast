@@ -201,6 +201,31 @@ lag_X_dict = {
     "Fossil_Swi": [10, 11, 12],
     "Fossil_UK": [10, 11, 12],
     "Fossil_US": [10, 11, 12],
+    
+    # Construction Costs Data
+    "CC_CHI": [10, 11, 12],
+    "CC_FRA": [10, 11, 12],
+    "CC_GER": [10, 11, 12],
+    "CC_ITA": [10, 11, 12],
+    "CC_JAP": [10, 11, 12],
+    "CC_Europe": [10, 11, 12],
+    "CC_SWI": [10, 11, 12],
+    "CC_UK": [10, 11, 12],
+    "CC_USA": [10, 11, 12],
+
+    # Building Costs Data
+    "BC_CHI": [10, 11, 12],
+    "BC_FRA": [10, 11, 12],
+    "BC_GER": [10, 11, 12],
+    "BC_ITA": [10, 11, 12],
+    "BC_JAP": [10, 11, 12],
+    "BC_Europe": [10, 11, 12],
+    "BC_SWI": [10, 11, 12],
+    "BC_UK": [10, 11, 12],
+    "BC_USA": [10, 11, 12],
+
+    # Buildings Data
+    "Buildings_Ger": [10, 11, 12]
 }
 
 # Depends on the ACF and PACF
