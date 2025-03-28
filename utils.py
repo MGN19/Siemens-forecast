@@ -115,7 +115,7 @@ rename_dict_buildings = {
 }
 
 # select features minmax XGBoost
-{'y_train_36': ['#14_Lag_1', '#9_Lag_1', '#4_Lag_1'],
+fs_mm_xgb = {'y_train_36': ['#14_Lag_1', '#9_Lag_1', '#4_Lag_1'],
  'y_train_8': ['#36_Lag_1',
   'stock_price_change',
   'CHI Production Index',
@@ -167,7 +167,7 @@ rename_dict_buildings = {
  'y_train_14': ['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']}
 
 # select features robust XGBoost
-{'y_train_36': ['(W) Price of Energy', '#14_Lag_1', '#9_Lag_1', '#4_Lag_1'],
+fs_r_xgb ={'y_train_36': ['(W) Price of Energy', '#14_Lag_1', '#9_Lag_1', '#4_Lag_1'],
  'y_train_8': ['#36_Lag_1',
   '#36_Lag_12',
   'CHI Production Index',
@@ -227,7 +227,7 @@ rename_dict_buildings = {
   'USA Production Index']}
 
 # select features robust LGBM
-{'y_train_36': ['#14_Lag_1', '#16_Lag_3'],
+fs_r_lgbm ={'y_train_36': ['#14_Lag_1', '#16_Lag_3'],
  'y_train_8': ['#16_Lag_3',
   '#12_RollingMean_12',
   '#12_Lag_3',
