@@ -16,7 +16,7 @@ from prophet import Prophet
 from sklearn.base import clone
 from lazypredict.Supervised import LazyRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
-
+import xgboost as xgb
 
 
 # Train-Validation Split
@@ -427,3 +427,60 @@ def lazy_regressor(X_train, X_val, target_train, target_val, plot = False, csv_p
         print(f"Results appended to {csv_path}")
 
     return best_model, val_preds
+
+# XGBoost
+
+def xgboost_regressor(X_train, X_val, target_train, target_val, plot=False, csv_path=None):
+    
+    model = xgb.XGBRegressor(objective='reg:squarederror', n_estimators=100, max_depth=6)
+    
+    # Fit the model
+    model.fit(X_train, target_train)
+    
+    # Make predictions
+    train_preds = model.predict(X_train)
+    val_preds = model.predict(X_val)
+    
+    # Metrics
+    train_rmse = np.sqrt(mean_squared_error(target_train, train_preds))
+    train_mape = mean_absolute_percentage_error(target_train, train_preds) * 100
+    
+    val_rmse = np.sqrt(mean_squared_error(target_val, val_preds))  
+    val_mape = mean_absolute_percentage_error(target_val, val_preds) * 100 
+    
+    # Plot 
+    if plot:
+        plt.figure(figsize=(12, 6))
+        plt.plot(target_train.index, target_train, label='Actual Train', color='blue', alpha=0.7)
+        plt.plot(target_val.index, target_val, label='Actual Validation', color='green', alpha=0.7)
+        plt.plot(target_val.index, val_preds, label='Predicted Validation', color='red')
+        plt.legend()
+        plt.title(f'XGBoost Model - Training and Validation Predictions')
+        plt.xlabel('Time')
+        plt.xticks(rotation=45)
+        plt.ylabel('Value')
+        plt.show()
+
+    # Store results
+    results = {
+        "model_type": "XGBoost",
+        "features_used": X_train.columns.tolist(),
+        "train_rmse": train_rmse,
+        "val_rmse": val_rmse,
+        "train_mape (%)": train_mape,
+        "val_mape (%)": val_mape
+    }
+
+    # Save results to CSV if a path is provided
+    if csv_path:
+        results_df = pd.DataFrame([results])
+        
+        # Check if file exists to determine mode
+        if os.path.exists(csv_path):
+            results_df.to_csv(csv_path, mode='a', header=False, index=False)
+        else:
+            results_df.to_csv(csv_path, mode='w', header=True, index=False)
+        
+        print(f"Results appended to {csv_path}")
+
+    return model, val_preds
