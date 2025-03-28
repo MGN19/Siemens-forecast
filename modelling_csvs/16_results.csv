@@ -2,4 +2,4 @@ model_type,features_used,train_rmse,val_rmse,train_mape (%),val_mape (%)
 arima,N/A,931214.204453816,103791.66967508882,199.0827583091653,91.21571728377658
 sarimax,"['GER Production Index', '#4_Lag_6', '#12_Lag_1', 'SWI Production Index', '#16_RollingMean_3']",930345.7476130878,617400.9911920949,280.52404735638163,268.0921242057291
 prophet,N/A,,778033.8421846539,,570.1503909678373
-sarimax,"['GER Production Index', '#4_Lag_6', '#12_Lag_1', 'SWI Production Index', '#16_RollingMean_3']",930345.7476130878,617400.9911920949,280.52404735638163,268.0921242057291
+KNeighborsRegressor,"['GER Production Index', '#4_Lag_6', '#12_Lag_1', 'SWI Production Index', '#16_RollingMean_3']",706867.9863023277,103231.63993242146,82.49588060926146,64.95629426564965

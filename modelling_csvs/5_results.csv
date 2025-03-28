@@ -2,4 +2,4 @@ model_type,features_used,train_rmse,val_rmse,train_mape (%),val_mape (%)
 arima,N/A,4063096.2965635182,3936083.503218134,54.82566313084158,21.815220059741574
 sarimax,"['#1_Lag_1', 'Fossil_Swi', '#20_Lag_1', 'Fossil_US', 'TotalDaysInMonth', 'Fossil_UK']",4195963.170715023,4501897.59392132,49.11940669670366,32.36949028766341
 prophet,N/A,,3884099.485084057,,27.674005444323907
-sarimax,"['#1_Lag_1', 'Fossil_Swi', '#20_Lag_1', 'Fossil_US', 'TotalDaysInMonth', 'Fossil_UK']",4195963.170715023,4501897.59392132,49.11940669670366,32.36949028766341
+DecisionTreeRegressor,"['#1_Lag_1', 'Fossil_Swi', '#20_Lag_1', 'Fossil_US', 'TotalDaysInMonth', 'Fossil_UK']",0.0,3303605.3072929317,0.0,25.042138144751853
