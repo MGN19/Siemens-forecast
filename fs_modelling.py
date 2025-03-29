@@ -115,7 +115,7 @@ def rfe(X_train, y_train, rfe_model=None, plot=False):
         rfe_model = LinearRegression()
     
     rfecv = RFECV(estimator=rfe_model, cv=5, 
-                  min_features_to_select=100, scoring='neg_root_mean_squared_error')
+                  min_features_to_select=50, scoring='neg_root_mean_squared_error')
     rfecv.fit(X_train, y_train)
     selected_features = X_train.columns[rfecv.support_].tolist()
     print(f'Selected {len(selected_features)} features by RFECV')
@@ -369,72 +369,26 @@ def stats_models(model_type, X_train, X_val, y_train, y_val,
     else:
         return model_fit, val_preds, model_fit.summary()
 
+# All models
 
-# Lazy Regressor
-def lazy_regressor(X_train, X_val, target_train, target_val, plot = False, csv_path = None):
-
-    # Fit LazyRegressor
-    regressor = LazyRegressor(ignore_warnings=True)
+def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_path=None, **model_params):
+    """
+    Train any regression model and evaluate its performance.
     
-    lazy_model, lazy_predictions = regressor.fit(X_train, X_val, target_train, target_val)
-
-    best_model_name = lazy_model["RMSE"].idxmin()
-    best_model_class = regressor.models[best_model_name]
-
-    best_model = clone(best_model_class)
-    best_model.fit(X_train, target_train)
-
-    train_preds = best_model.predict(X_train)
-    val_preds = best_model.predict(X_val)
+    Parameters:
+    - model: The regression model instance (e.g., XGBRegressor, RandomForestRegressor).
+    - X_train: Training features.
+    - X_val: Validation features.
+    - target_train: Training target variable.
+    - target_val: Validation target variable.
+    - plot (bool): Whether to plot actual vs predicted values.
+    - csv_path (str, optional): Path to save the results CSV file.
+    - **model_params: Additional parameters to pass to the model.
+    """
     
-    # Metrics
-    train_rmse = np.sqrt(mean_squared_error(target_train, train_preds))
-    train_mape = mean_absolute_percentage_error(target_train, train_preds) * 100
+    model.set_params(**model_params)
     
-    val_rmse = np.sqrt(mean_squared_error(target_val, val_preds))  
-    val_mape = mean_absolute_percentage_error(target_val, val_preds) * 100 
-
-    if plot:
-        plt.figure(figsize=(12, 6))
-        plt.plot(target_train.index, target_train, label='Actual Train', color='blue', alpha=0.7)
-        plt.plot(target_val.index, target_val, label='Actual Validation', color='green', alpha=0.7)
-        plt.plot(target_val.index, val_preds, label='Predicted Validation', color='red')
-        plt.legend()
-        plt.title(f'{best_model_name.upper()} Model - Training and Validation Predictions')
-        plt.xlabel('Time')
-        plt.xticks(rotation=45)
-        plt.ylabel('Value')
-        plt.show()
-
-    results = {
-        "model_type": best_model_name,
-        "features_used": X_train.columns.tolist(),
-        "train_rmse": train_rmse,
-        "val_rmse": val_rmse,
-        "train_mape (%)": train_mape,
-        "val_mape (%)": val_mape
-        }
-
-    if csv_path:
-        results_df = pd.DataFrame([results])
-        
-        # Check if file exists to determine mode
-        if os.path.exists(csv_path):
-            results_df.to_csv(csv_path, mode='a', header=False, index=False)
-        else:
-            results_df.to_csv(csv_path, mode='w', header=True, index=False)
-        
-        print(f"Results appended to {csv_path}")
-
-    return best_model, val_preds
-
-# XGBoost
-
-def xgboost_regressor(X_train, X_val, target_train, target_val, plot=False, csv_path=None):
-    
-    model = xgb.XGBRegressor(objective='reg:squarederror', n_estimators=100, max_depth=6)
-    
-    # Fit the model
+    # Fit 
     model.fit(X_train, target_train)
     
     # Make predictions
@@ -448,14 +402,14 @@ def xgboost_regressor(X_train, X_val, target_train, target_val, plot=False, csv_
     val_rmse = np.sqrt(mean_squared_error(target_val, val_preds))  
     val_mape = mean_absolute_percentage_error(target_val, val_preds) * 100 
     
-    # Plot 
+    # Plot
     if plot:
         plt.figure(figsize=(12, 6))
         plt.plot(target_train.index, target_train, label='Actual Train', color='blue', alpha=0.7)
         plt.plot(target_val.index, target_val, label='Actual Validation', color='green', alpha=0.7)
         plt.plot(target_val.index, val_preds, label='Predicted Validation', color='red')
         plt.legend()
-        plt.title(f'XGBoost Model - Training and Validation Predictions')
+        plt.title(f'{model.__class__.__name__} - Training and Validation Predictions')
         plt.xlabel('Time')
         plt.xticks(rotation=45)
         plt.ylabel('Value')
@@ -463,7 +417,7 @@ def xgboost_regressor(X_train, X_val, target_train, target_val, plot=False, csv_
 
     # Store results
     results = {
-        "model_type": "XGBoost",
+        "model_type": model.__class__.__name__,
         "features_used": X_train.columns.tolist(),
         "train_rmse": train_rmse,
         "val_rmse": val_rmse,

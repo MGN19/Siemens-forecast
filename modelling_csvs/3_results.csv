@@ -20,3 +20,14 @@ arima,N/A,2817290.656533946,2092585.741432912,17.790453479504848,11.264459066804
 sarimax,"['GerHolidayCount', '#20_Lag_1', '#14_Lag_1', 'SWI Production Index_Lag_12', 'TotalDaysInMonth', 'stock_price_change_Lag_12', '#36_Lag_12', '#8_Lag_3', '#12_Lag_12', 'Fossil_Chi_Lag_12_RollingMean3', 'USA Shipments Index_Lag_12']",7215723.007988295,4532869.17908385,34.35355040405968,28.102570173881887
 prophet,N/A,,2104622.373441579,,13.533385905008785
 XGBoost,"['GerHolidayCount', '#20_Lag_1', '#14_Lag_1', 'SWI Production Index_Lag_12', 'TotalDaysInMonth', 'stock_price_change_Lag_12', '#36_Lag_12', '#8_Lag_3', '#12_Lag_12', 'Fossil_Chi_Lag_12_RollingMean3', 'USA Shipments Index_Lag_12']",1.1811694506273331,2068256.8750945807,9.027903757896638e-06,11.918143182992935
+arima,N/A,2817290.656533946,2092585.741432912,17.790453479504848,11.264459066804205
+prophet,N/A,,2104622.373441579,,13.533385905008785
+BaggingRegressor,"['TotalDaysInMonth', '#8_Lag_3', '#36_Lag_12', 'SWI Production Index_Lag_12', 'stock_price_change_Lag_12']",808379.6185536273,1990992.615737363,5.40801410900293,10.80372414809912
+XGBoost,"['TotalDaysInMonth', '#8_Lag_3', '#36_Lag_12', 'SWI Production Index_Lag_12', 'stock_price_change_Lag_12']",1.24757827773121,3066460.285136594,8.763549175228036e-06,15.600134432315826
+LGBMRegressor,"['TotalDaysInMonth', '#8_Lag_3', '#36_Lag_12', 'SWI Production Index_Lag_12', 'stock_price_change_Lag_12']",2017879.749023134,2706945.3902306296,13.443864812334985,13.712720875625656
+RandomForestRegressor,"['TotalDaysInMonth', '#8_Lag_3', '#36_Lag_12', 'SWI Production Index_Lag_12', 'stock_price_change_Lag_12']",700687.5173328376,2152881.8281452693,4.569730683650253,11.537911195971684
+XGBRegressor,"['TotalDaysInMonth', '#8_Lag_3', '#36_Lag_12', 'SWI Production Index_Lag_12', 'stock_price_change_Lag_12']",1.7960530266909351,2978921.2494297326,1.1564414137410495e-05,15.72706252336502
+Ridge,"['TotalDaysInMonth', '#8_Lag_3', '#36_Lag_12', 'SWI Production Index_Lag_12', 'stock_price_change_Lag_12']",1795192.9742272191,4739331.7441152455,11.084421240378349,22.9269026793449
+Lasso,"['TotalDaysInMonth', '#8_Lag_3', '#36_Lag_12', 'SWI Production Index_Lag_12', 'stock_price_change_Lag_12']",1766397.5231684085,7242479.0388189005,11.213187739459164,30.686845743784946
+SVR,"['TotalDaysInMonth', '#8_Lag_3', '#36_Lag_12', 'SWI Production Index_Lag_12', 'stock_price_change_Lag_12']",2058061.110450725,2982796.908443272,12.709408011327733,15.899107476074596
+RandomForestRegressor,"['TotalDaysInMonth', '#8_Lag_3', '#36_Lag_12', 'SWI Production Index_Lag_12', 'stock_price_change_Lag_12']",744440.6228232804,2278109.100366831,4.241181598757924,11.971070248119025
