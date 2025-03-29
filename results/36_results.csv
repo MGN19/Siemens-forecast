@@ -1,0 +1,5 @@
+model_type,features_used,model_params,train_rmse,val_rmse,train_mape (%),val_mape (%)
+arima,N/A,,10293.810287879054,13871.60393067704,115.45333030489627,237.78110870883617
+sarimax,"['CC_UK_Lag_12_RollingMean3', '#12_Lag_3', '#14_Lag_1', '#12_Lag_1_RollingMean6', '#9_Lag_12', '#1_Lag_1_RollingMean3', 'stock_volume_Lag_12', 'GER Production Index_Lag_12', '#36_Lag_12', '#8_Lag_3', '#16_Lag_1_RollingMean3', 'GER EE Production Index_Lag_12_RollingMean3', '#13_Lag_1']",,13203.682253424016,82956.00528500965,197.78887653455263,639.7743237366678
+prophet,N/A,,,14393.704246684081,,221.09640620480957
+RandomForestRegressor,"['CC_UK_Lag_12_RollingMean3', '#12_Lag_3', '#14_Lag_1', '#12_Lag_1_RollingMean6', '#9_Lag_12', '#1_Lag_1_RollingMean3', 'stock_volume_Lag_12', 'GER Production Index_Lag_12', '#36_Lag_12', '#8_Lag_3', '#16_Lag_1_RollingMean3', 'GER EE Production Index_Lag_12_RollingMean3', '#13_Lag_1']",{'max_depth': 5},4510.409188810756,15255.924745591785,53.67301984555147,470.6145487769503

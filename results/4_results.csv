@@ -1,0 +1,5 @@
+model_type,features_used,model_params,train_rmse,val_rmse,train_mape (%),val_mape (%)
+arima,N/A,,149722.9262516921,174567.554651755,42.25132196157789,26.82310162612064
+sarimax,"['#1_Lag_1', 'CHI Production Index_Lag_12', '#9_Lag_1_RollingMean3', 'Clean_Chi_Lag_12', '#9_Lag_1_RollingMean12', 'Clean_Fra_Lag_12', '#6_Lag_1_RollingMean3', '#3_Lag_1_RollingMean3', '#12_Lag_1', '#4_Lag_6_RollingMean6', 'SundayCount', 'Clean_Ita_Lag_12', 'Clean_US_Lag_12_RollingMean6', '#16_Lag_1', '#11_Lag_1_RollingMean6']",,241670.56072500607,921626.1653211429,54.50784225470976,279.283199310983
+prophet,N/A,,,228090.08387064873,,37.78314676630125
+RandomForestRegressor,"['#1_Lag_1', 'CHI Production Index_Lag_12', '#9_Lag_1_RollingMean3', 'Clean_Chi_Lag_12', '#9_Lag_1_RollingMean12', 'Clean_Fra_Lag_12', '#6_Lag_1_RollingMean3', '#3_Lag_1_RollingMean3', '#12_Lag_1', '#4_Lag_6_RollingMean6', 'SundayCount', 'Clean_Ita_Lag_12', 'Clean_US_Lag_12_RollingMean6', '#16_Lag_1', '#11_Lag_1_RollingMean6']",{'max_depth': 5},39709.852865473746,174609.6993033156,10.69949492519801,25.270137197834952

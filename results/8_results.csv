@@ -1,0 +1,5 @@
+model_type,features_used,model_params,train_rmse,val_rmse,train_mape (%),val_mape (%)
+arima,N/A,,327777.679655852,678664.0841411233,47.9444983876125,39.481907044067064
+sarimax,"['CHI Production Index_Lag_12', 'USA EE Producer Prices_Lag_12_RollingMean3', 'FRA EE Producer Prices_Lag_12_RollingMean3', '#6_Lag_1_RollingMean3', '#13_Lag_3_RollingMean6', '#16_Lag_3', 'Clean_Ita_Lag_12', '#16_Lag_1_RollingMean3', '#11_Lag_1', '#12_Lag_12']",,368585.38592729846,1075474.3365113828,57.41886498601574,102.23602031175216
+prophet,N/A,,,548766.4332126979,,28.00662766425848
+RandomForestRegressor,"['CHI Production Index_Lag_12', 'USA EE Producer Prices_Lag_12_RollingMean3', 'FRA EE Producer Prices_Lag_12_RollingMean3', '#6_Lag_1_RollingMean3', '#13_Lag_3_RollingMean6', '#16_Lag_3', 'Clean_Ita_Lag_12', '#16_Lag_1_RollingMean3', '#11_Lag_1', '#12_Lag_12']",{'max_depth': 5},124426.08600174032,761414.2274505643,22.915011995130982,40.960362079490416

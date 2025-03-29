@@ -346,6 +346,7 @@ def stats_models(model_type, X_train, X_val, y_train, y_val,
     results = {
         "model_type": model_type,
         "features_used": X_train.columns.tolist() if model_type == 'sarimax' else "N/A",
+        "model_params": None,
         "train_rmse": train_rmse,
         "val_rmse": val_rmse,
         "train_mape (%)": train_mape,

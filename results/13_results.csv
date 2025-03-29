@@ -1,0 +1,5 @@
+model_type,features_used,model_params,train_rmse,val_rmse,train_mape (%),val_mape (%)
+arima,N/A,,12064.232218380967,12265.516728129789,78.78721625929248,116.56536690333665
+sarimax,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']",,13887.527352492682,18535.601652032743,93.76432982770487,127.47448485371287
+prophet,N/A,,,12804.874376827182,,77.79669722328912
+RandomForestRegressor,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']",{'max_depth': 5},4654.177648360374,11720.78003837977,34.72410258993398,105.49817699018537

@@ -1,0 +1,5 @@
+model_type,features_used,model_params,train_rmse,val_rmse,train_mape (%),val_mape (%)
+arima,N/A,,4792.4297061622165,5279.121918408121,2.5522921536234656e+19,196.36574373429775
+sarimax,"['#1_Lag_1', 'CHI Production Index_Lag_12', '#20_Lag_1', 'CC_UK_Lag_12_RollingMean3', '#9_Lag_12_RollingMean3', '#14_Lag_1', '#36_Lag_1', 'GER EE Production Index_Lag_12', '#14_Lag_6', 'GER Production Index_Lag_12', 'Fossil_Chi_Lag_12_RollingMean6', '#4_Lag_1_RollingMean3']",,10731.826663953041,14793.093363096646,2.7171695525619063e+20,401.50338609323495
+prophet,N/A,,,6964.438560542882,,330.085303480523
+RandomForestRegressor,"['#1_Lag_1', 'CHI Production Index_Lag_12', '#20_Lag_1', 'CC_UK_Lag_12_RollingMean3', '#9_Lag_12_RollingMean3', '#14_Lag_1', '#36_Lag_1', 'GER EE Production Index_Lag_12', '#14_Lag_6', 'GER Production Index_Lag_12', 'Fossil_Chi_Lag_12_RollingMean6', '#4_Lag_1_RollingMean3']",{'max_depth': 5},1604.651797251695,4087.824470257202,1.1062765745369567e+19,197.37174007395708

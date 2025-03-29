@@ -1,0 +1,36 @@
+model_type,features_used,train_rmse,val_rmse,train_mape (%),val_mape (%)
+arima,N/A,9266.330500708824,7359.758231635995,2.612264280007612e+19,509.48694428971874
+sarimax,"['#20_Lag_1', '#36_Lag_1', '#4_Lag_1', '#13_Lag_1']",11288.905492272288,8779.818795697252,1.4275085278990192e+20,251.26497866818468
+prophet,N/A,,12632.73055952077,,767.6746798744664
+KNeighborsRegressor,"['#20_Lag_1', '#36_Lag_1', '#4_Lag_1', '#13_Lag_1']",6416.755248442496,4680.467395828148,1.260925378096373e+20,207.87613134485156
+arima,N/A,9266.330500708824,7359.758231635995,2.612264280007612e+19,509.48694428971874
+sarimax,"['#36_Lag_1', '#4_Lag_1', '#13_Lag_1']",11614.852679536027,9096.615451515461,3.315630566075147e+20,318.83372490744614
+prophet,N/A,,12632.73055952077,,767.6746798744664
+ElasticNetCV,"['#36_Lag_1', '#4_Lag_1', '#13_Lag_1']",8716.413179050624,4946.018435451164,1.1654627299707062e+20,301.4908289592986
+arima,N/A,9266.330500708824,7359.758231635995,2.612264280007612e+19,509.48694428971874
+sarimax,"['#14_Lag_6', '#36_Lag_1', '#13_Lag_1']",9262.37581775357,8073.199369046218,1.6171166121219955e+20,294.29252964745444
+prophet,N/A,,12632.73055952077,,767.6746798744664
+KNeighborsRegressor,"['#14_Lag_6', '#36_Lag_1', '#13_Lag_1']",8257.979779146066,4583.595844512872,1.7525647539082707e+20,206.50388450031207
+XGBoost,"['#20_Lag_1', '#36_Lag_1', '#4_Lag_1', '#13_Lag_1']",0.0025369904898730556,10249.37578587106,7356813312000.0,232.24623203277588
+SVR,"['#20_Lag_1', '#36_Lag_1', '#4_Lag_1', '#13_Lag_1']",9532.105179161537,5313.056322892867,6.51770777442575e+19,183.49818610077838
+SVR,"['#20_Lag_1', '#36_Lag_1', '#4_Lag_1', '#13_Lag_1']",9532.105179161537,5313.056322892867,6.51770777442575e+19,183.49818610077838
+SVR,"['#20_Lag_1', '#36_Lag_1', '#4_Lag_1', '#13_Lag_1']",9532.105179161537,5313.056322892867,6.51770777442575e+19,183.49818610077838
+SVR,"['#20_Lag_1', '#36_Lag_1', '#4_Lag_1', '#13_Lag_1']",11715.139907823896,8071.4561398200385,6.143488064620618e+17,98.28534749813893
+arima,N/A,4792.4297061622165,5279.121918408121,2.5522921536234656e+19,196.36574373429775
+sarimax,"['#1_Lag_1', 'CHI Production Index_Lag_12', '#20_Lag_1', 'CC_UK_Lag_12_RollingMean3', '#9_Lag_12_RollingMean3', '#14_Lag_1', '#36_Lag_1', 'GER EE Production Index_Lag_12', '#14_Lag_6', 'GER Production Index_Lag_12', 'Fossil_Chi_Lag_12_RollingMean6', '#4_Lag_1_RollingMean3']",10731.826663953041,14793.093363096646,2.7171695525619063e+20,401.50338609323495
+prophet,N/A,,6964.438560542882,,330.085303480523
+XGBoost,"['#1_Lag_1', 'CHI Production Index_Lag_12', '#20_Lag_1', 'CC_UK_Lag_12_RollingMean3', '#9_Lag_12_RollingMean3', '#14_Lag_1', '#36_Lag_1', 'GER EE Production Index_Lag_12', '#14_Lag_6', 'GER Production Index_Lag_12', 'Fossil_Chi_Lag_12_RollingMean6', '#4_Lag_1_RollingMean3']",0.0013452763202498935,5463.213706235552,4133999820800.0,358.3648443222046
+RandomForestRegressor,"['#1_Lag_1', 'CHI Production Index_Lag_12', '#20_Lag_1', 'CC_UK_Lag_12_RollingMean3', '#9_Lag_12_RollingMean3', '#14_Lag_1', '#36_Lag_1', 'GER EE Production Index_Lag_12', '#14_Lag_6', 'GER Production Index_Lag_12', 'Fossil_Chi_Lag_12_RollingMean6', '#4_Lag_1_RollingMean3']",1568.3228649802,4186.615807414447,9.647470202667964e+18,215.85779073682426
+RandomForestRegressor,"['#1_Lag_1', 'CHI Production Index_Lag_12', '#20_Lag_1', 'CC_UK_Lag_12_RollingMean3', '#9_Lag_12_RollingMean3', '#14_Lag_1', '#36_Lag_1', 'GER EE Production Index_Lag_12', '#14_Lag_6', 'GER Production Index_Lag_12', 'Fossil_Chi_Lag_12_RollingMean6', '#4_Lag_1_RollingMean3']",1568.3228649802,4186.615807414447,9.647470202667964e+18,215.85779073682426
+RandomForestRegressor,"['#1_Lag_1', 'CHI Production Index_Lag_12', '#20_Lag_1', 'CC_UK_Lag_12_RollingMean3', '#9_Lag_12_RollingMean3', '#14_Lag_1', '#36_Lag_1', 'GER EE Production Index_Lag_12', '#14_Lag_6', 'GER Production Index_Lag_12', 'Fossil_Chi_Lag_12_RollingMean6', '#4_Lag_1_RollingMean3']",1568.3228649802,4186.615807414447,9.647470202667964e+18,215.85779073682426
+arima,N/A,4792.4297061622165,5279.121918408121,2.5522921536234656e+19,196.36574373429775
+prophet,N/A,,6964.438560542882,,330.085303480523
+AdaBoostRegressor,"['GER EE Production Index_Lag_12', '#20_Lag_1', '#36_Lag_1', 'CC_UK_Lag_12_RollingMean3', 'GER Production Index_Lag_12', '#13_Lag_3_RollingMean6', '#9_Lag_12_RollingMean3', '#14_Lag_6']",942.0342637513675,4414.8684992648505,1.993763271256485e+19,158.03773389195828
+XGBoost,"['GER EE Production Index_Lag_12', '#20_Lag_1', '#36_Lag_1', 'CC_UK_Lag_12_RollingMean3', 'GER Production Index_Lag_12', '#13_Lag_3_RollingMean6', '#9_Lag_12_RollingMean3', '#14_Lag_6']",0.0013879442106107117,5076.871477593263,1816348262400.0,275.42731761932373
+LGBMRegressor,"['GER EE Production Index_Lag_12', '#20_Lag_1', '#36_Lag_1', 'CC_UK_Lag_12_RollingMean3', 'GER Production Index_Lag_12', '#13_Lag_3_RollingMean6', '#9_Lag_12_RollingMean3', '#14_Lag_6']",4537.065761026467,5166.263022024983,7.1815750176969834e+19,202.14884719565106
+RandomForestRegressor,"['GER EE Production Index_Lag_12', '#20_Lag_1', '#36_Lag_1', 'CC_UK_Lag_12_RollingMean3', 'GER Production Index_Lag_12', '#13_Lag_3_RollingMean6', '#9_Lag_12_RollingMean3', '#14_Lag_6']",1525.03031383479,4395.2502852335065,9.035974350811744e+18,214.6284638834653
+XGBRegressor,"['GER EE Production Index_Lag_12', '#20_Lag_1', '#36_Lag_1', 'CC_UK_Lag_12_RollingMean3', 'GER Production Index_Lag_12', '#13_Lag_3_RollingMean6', '#9_Lag_12_RollingMean3', '#14_Lag_6']",0.0008691298730759789,5081.163843058005,2615431372800.0,268.2661294937134
+Ridge,"['GER EE Production Index_Lag_12', '#20_Lag_1', '#36_Lag_1', 'CC_UK_Lag_12_RollingMean3', 'GER Production Index_Lag_12', '#13_Lag_3_RollingMean6', '#9_Lag_12_RollingMean3', '#14_Lag_6']",3011.73896722148,6117.643759989906,3.889796971098263e+19,357.95658915180167
+Lasso,"['GER EE Production Index_Lag_12', '#20_Lag_1', '#36_Lag_1', 'CC_UK_Lag_12_RollingMean3', 'GER Production Index_Lag_12', '#13_Lag_3_RollingMean6', '#9_Lag_12_RollingMean3', '#14_Lag_6']",2710.1157124244173,7558.357969534812,1.4054573442206872e+19,492.6482908439774
+SVR,"['GER EE Production Index_Lag_12', '#20_Lag_1', '#36_Lag_1', 'CC_UK_Lag_12_RollingMean3', 'GER Production Index_Lag_12', '#13_Lag_3_RollingMean6', '#9_Lag_12_RollingMean3', '#14_Lag_6']",4559.221757061246,5313.567750264929,6.516815972327888e+19,183.47644505307846
+RandomForestRegressor,"['GER EE Production Index_Lag_12', '#20_Lag_1', '#36_Lag_1', 'CC_UK_Lag_12_RollingMean3', 'GER Production Index_Lag_12', '#13_Lag_3_RollingMean6', '#9_Lag_12_RollingMean3', '#14_Lag_6']",1537.957070389454,4339.911989943537,8.326107839533793e+18,223.30227174214738

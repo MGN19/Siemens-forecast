@@ -1,0 +1,33 @@
+model_type,features_used,train_rmse,val_rmse,train_mape (%),val_mape (%)
+arima,N/A,13160.435819512608,22871.696931974777,3.825309143327381e+20,3.566229392542838e+20
+sarimax,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",13899.746151775951,24414.637785334362,3.509058895241599e+20,8.936672405677297e+20
+prophet,N/A,,22284.942420736887,,2.7044394272562233e+20
+GradientBoostingRegressor,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",213.71433866879408,20141.996148948463,1.278027907894151e+19,4.694302872446652e+20
+arima,N/A,13160.435819512608,22871.696931974777,3.825309143327381e+20,3.566229392542838e+20
+sarimax,"['#13_Lag_3', 'Clean_Ita', 'Buildings_Ger', '#14_Lag_1', 'stock_volume', 'USA Production Index']",15095.3039045515,22627.668639452106,2.753128638545046e+20,6.579742160818449e+19
+prophet,N/A,,22284.942420736887,,2.7044394272562233e+20
+DecisionTreeRegressor,"['#13_Lag_3', 'Clean_Ita', 'Buildings_Ger', '#14_Lag_1', 'stock_volume', 'USA Production Index']",0.0,21199.561148603014,0.0,2.11256352520571e+20
+arima,N/A,13160.435819512608,22871.696931974777,3.825309143327381e+20,3.566229392542838e+20
+prophet,N/A,,22284.942420736887,,2.7044394272562233e+20
+ExtraTreeRegressor,"['#13_Lag_3', '#14_Lag_1', '#13_RollingMean_3', '#12_Lag_3']",0.0,21572.5246325884,0.0,7.775952646614794e+20
+XGBoost,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",0.0028213799868579254,24216.02907167069,34527893913600.0,4.4956163483191214e+20
+SVR,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",12818.15504533585,23646.74527316423,3.0153416663365845e+20,2.597773221859712e+20
+SVR,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",12818.15504533585,23646.74527316423,3.0153416663365845e+20,2.597773221859712e+20
+SVR,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",12818.15504533585,23646.74527316423,3.0153416663365845e+20,2.597773221859712e+20
+SVR,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",15980.874874495568,26819.629558615106,1.289982708416548e+18,1.3617333695185403e+18
+arima,N/A,8008.769362697346,23261.27565214397,3.1410197272692864e+20,3.0304210542003434e+20
+sarimax,"['USA Production Index_Lag_12', 'GerHolidayCount', 'USA Shipments Index_Lag_12_RollingMean3', '#14_Lag_1', '#9_Lag_1_RollingMean12', '#16_Lag_3', '#9_Lag_1', '#13_Lag_3_RollingMean3', '#36_Lag_12', '#13_Lag_1']",9855.820183854928,44255.24795055042,3.3310594765366454e+20,4.226519020559861e+20
+prophet,N/A,,21664.05274355395,,1.971785154061763e+20
+XGBoost,"['USA Production Index_Lag_12', 'GerHolidayCount', 'USA Shipments Index_Lag_12_RollingMean3', '#14_Lag_1', '#9_Lag_1_RollingMean12', '#16_Lag_3', '#9_Lag_1', '#13_Lag_3_RollingMean3', '#36_Lag_12', '#13_Lag_1']",0.0012362838108125052,24581.37961954129,7517384704000.0,3.3001863497929196e+20
+OrthogonalMatchingPursuit,"['USA Production Index_Lag_12', 'GerHolidayCount', 'USA Shipments Index_Lag_12_RollingMean3', '#14_Lag_1', '#9_Lag_1_RollingMean12', '#16_Lag_3', '#9_Lag_1', '#13_Lag_3_RollingMean3', '#36_Lag_12', '#13_Lag_1']",7534.205592135304,23105.748348539266,3.013974994518648e+20,2.746034953004965e+20
+OrthogonalMatchingPursuit,"['USA Production Index_Lag_12', 'GerHolidayCount', 'USA Shipments Index_Lag_12_RollingMean3', '#14_Lag_1', '#9_Lag_1_RollingMean12', '#16_Lag_3', '#9_Lag_1', '#13_Lag_3_RollingMean3', '#36_Lag_12', '#13_Lag_1']",7534.205592135304,23105.748348539266,3.013974994518648e+20,2.746034953004965e+20
+arima,N/A,8008.769362697346,23261.27565214397,3.1410197272692864e+20,3.0304210542003434e+20
+prophet,N/A,,21664.05274355395,,1.971785154061763e+20
+XGBoost,"['USA Shipments Index_Lag_12_RollingMean3', '#9_Lag_1_RollingMean12', 'USA Production Index_Lag_12', '#13_Lag_3_RollingMean3', '#11_Lag_1_RollingMean12', '#16_Lag_3', 'GerHolidayCount', '#9_Lag_1', '#13_Lag_1', '#14_Lag_1', 'ITA EE Producer Prices_Lag_12']",0.0012608512231805065,24872.156963158624,3425852620800.0,3.259279844315234e+20
+LGBMRegressor,"['USA Shipments Index_Lag_12_RollingMean3', '#9_Lag_1_RollingMean12', 'USA Production Index_Lag_12', '#13_Lag_3_RollingMean3', '#11_Lag_1_RollingMean12', '#16_Lag_3', 'GerHolidayCount', '#9_Lag_1', '#13_Lag_1', '#14_Lag_1', 'ITA EE Producer Prices_Lag_12']",7808.711252687467,23212.920442452574,3.6073231744844136e+20,3.106306066917134e+20
+RandomForestRegressor,"['USA Shipments Index_Lag_12_RollingMean3', '#9_Lag_1_RollingMean12', 'USA Production Index_Lag_12', '#13_Lag_3_RollingMean3', '#11_Lag_1_RollingMean12', '#16_Lag_3', 'GerHolidayCount', '#9_Lag_1', '#13_Lag_1', '#14_Lag_1', 'ITA EE Producer Prices_Lag_12']",3023.8024608124933,23456.481504210613,1.1369275080566478e+20,3.9199201678143534e+20
+XGBRegressor,"['USA Shipments Index_Lag_12_RollingMean3', '#9_Lag_1_RollingMean12', 'USA Production Index_Lag_12', '#13_Lag_3_RollingMean3', '#11_Lag_1_RollingMean12', '#16_Lag_3', 'GerHolidayCount', '#9_Lag_1', '#13_Lag_1', '#14_Lag_1', 'ITA EE Producer Prices_Lag_12']",0.0015283277352121586,25074.934097620277,18133893120000.0,4.450450059917525e+20
+Ridge,"['USA Shipments Index_Lag_12_RollingMean3', '#9_Lag_1_RollingMean12', 'USA Production Index_Lag_12', '#13_Lag_3_RollingMean3', '#11_Lag_1_RollingMean12', '#16_Lag_3', 'GerHolidayCount', '#9_Lag_1', '#13_Lag_1', '#14_Lag_1', 'ITA EE Producer Prices_Lag_12']",7093.327331961794,23001.64269570848,2.414946240831931e+20,3.300027404094079e+20
+Lasso,"['USA Shipments Index_Lag_12_RollingMean3', '#9_Lag_1_RollingMean12', 'USA Production Index_Lag_12', '#13_Lag_3_RollingMean3', '#11_Lag_1_RollingMean12', '#16_Lag_3', 'GerHolidayCount', '#9_Lag_1', '#13_Lag_1', '#14_Lag_1', 'ITA EE Producer Prices_Lag_12']",6684.302277314617,24029.60954724782,1.5117111614263735e+20,3.7039318826929435e+20
+SVR,"['USA Shipments Index_Lag_12_RollingMean3', '#9_Lag_1_RollingMean12', 'USA Production Index_Lag_12', '#13_Lag_3_RollingMean3', '#11_Lag_1_RollingMean12', '#16_Lag_3', 'GerHolidayCount', '#9_Lag_1', '#13_Lag_1', '#14_Lag_1', 'ITA EE Producer Prices_Lag_12']",7925.480409531968,23647.59369671133,3.0143512119513756e+20,2.5965241832578528e+20
+RandomForestRegressor,"['USA Shipments Index_Lag_12_RollingMean3', '#9_Lag_1_RollingMean12', 'USA Production Index_Lag_12', '#13_Lag_3_RollingMean3', '#11_Lag_1_RollingMean12', '#16_Lag_3', 'GerHolidayCount', '#9_Lag_1', '#13_Lag_1', '#14_Lag_1', 'ITA EE Producer Prices_Lag_12']",3128.119516971395,23099.125490391558,9.187314448669576e+19,3.372078616378149e+20
