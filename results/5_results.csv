@@ -1,0 +1,5 @@
+model_type,features_used,model_params,train_rmse,val_rmse,train_mape (%),val_mape (%)
+arima,N/A,,4063096.2965635182,3936083.503218134,54.82566313084158,21.815220059741574
+sarimax,"['#1_Lag_1', '#20_Lag_1', '#5_Lag_1', 'TotalDaysInMonth', 'USA EUR to LCU Conversion Rate _Lag_12', '#4_Lag_6', '#16_Lag_3', 'stock_price_change_Lag_12', 'stock_volume_Lag_12', '#13_Lag_3_RollingMean3', 'CC_UK_Lag_12', '#4_Lag_1_RollingMean3']",,4027109.082015366,16579391.696307689,44.28487239931865,137.32829743281735
+prophet,N/A,,,3884099.485084057,,27.674005444323907
+RandomForestRegressor,"['#1_Lag_1', '#20_Lag_1', '#5_Lag_1', 'TotalDaysInMonth', 'USA EUR to LCU Conversion Rate _Lag_12', '#4_Lag_6', '#16_Lag_3', 'stock_price_change_Lag_12', 'stock_volume_Lag_12', '#13_Lag_3_RollingMean3', 'CC_UK_Lag_12', '#4_Lag_1_RollingMean3']",{'max_depth': 5},1500406.9157370504,3765153.343440117,20.720406287216946,23.54920458193486

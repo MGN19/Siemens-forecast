@@ -1,0 +1,5 @@
+model_type,features_used,model_params,train_rmse,val_rmse,train_mape (%),val_mape (%)
+arima,N/A,,1501.2817927258536,1732.1428389059731,3.937506560446165e+19,8.227244430066729e+19
+sarimax,"['#16_Lag_3_RollingMean6', '#14_Lag_1_RollingMean6', '#6_Lag_1_RollingMean3', '#5_Lag_1', '#9_Lag_12', '#1_Lag_1_RollingMean6', '#16_Lag_1', 'Year', 'Fossil_US_Lag_12_RollingMean3', 'Fossil_Chi_Lag_12_RollingMean6', '#12_Lag_1_RollingMean3', '#3_Lag_1']",,646111727144030.1,3981.275174811039,3.5157137414120923e+19,1.962818837595641e+20
+prophet,N/A,,,1897.2328403337929,,3.1532905830214636e+19
+RandomForestRegressor,"['#16_Lag_3_RollingMean6', '#14_Lag_1_RollingMean6', '#6_Lag_1_RollingMean3', '#5_Lag_1', '#9_Lag_12', '#1_Lag_1_RollingMean6', '#16_Lag_1', 'Year', 'Fossil_US_Lag_12_RollingMean3', 'Fossil_Chi_Lag_12_RollingMean6', '#12_Lag_1_RollingMean3', '#3_Lag_1']",{'max_depth': 5},504.12264230994344,1811.570909369317,1.4771099862034602e+19,7.602450547926665e+19

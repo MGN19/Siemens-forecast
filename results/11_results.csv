@@ -1,0 +1,5 @@
+model_type,features_used,model_params,train_rmse,val_rmse,train_mape (%),val_mape (%)
+arima,N/A,,1038601.9866566452,1047482.7768420703,322.9612850151618,94.64307831153937
+sarimax,"['#1_Lag_1', 'BC_CHI_Lag_12', 'GerHolidayCount', '#11_Lag_1_RollingMean3', '#9_Lag_1_RollingMean3', '#9_Lag_12_RollingMean3', '#12_Lag_3', 'FRA EE Producer Prices_Lag_12_RollingMean6', '#14_Lag_1', '#3_Lag_1_RollingMean6', '#1_Lag_1_RollingMean3', '#4_Lag_6', '#12_Lag_1', '#8_Lag_1_RollingMean3', 'stock_price_Lag_12_RollingMean3', 'Fossil_Fra_Lag_12', '#3_Lag_1']",,936282.4510898003,3760908.4943181253,213.8527111292404,479.33685217489466
+prophet,N/A,,,810006.4520385134,,70.02945837355958
+RandomForestRegressor,"['#1_Lag_1', 'BC_CHI_Lag_12', 'GerHolidayCount', '#11_Lag_1_RollingMean3', '#9_Lag_1_RollingMean3', '#9_Lag_12_RollingMean3', '#12_Lag_3', 'FRA EE Producer Prices_Lag_12_RollingMean6', '#14_Lag_1', '#3_Lag_1_RollingMean6', '#1_Lag_1_RollingMean3', '#4_Lag_6', '#12_Lag_1', '#8_Lag_1_RollingMean3', 'stock_price_Lag_12_RollingMean3', 'Fossil_Fra_Lag_12', '#3_Lag_1']",{'max_depth': 5},389292.8135737765,864505.8982518897,121.36786609214218,110.45048699598088
