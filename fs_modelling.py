@@ -114,8 +114,8 @@ def rfe(X_train, y_train, rfe_model=None, plot=False):
     if rfe_model is None:
         rfe_model = LinearRegression()
     
-    rfecv = RFECV(estimator=rfe_model, cv=10, 
-                  min_features_to_select=20, scoring='neg_root_mean_squared_error')
+    rfecv = RFECV(estimator=rfe_model, cv=5, 
+                  min_features_to_select=100, scoring='neg_root_mean_squared_error')
     rfecv.fit(X_train, y_train)
     selected_features = X_train.columns[rfecv.support_].tolist()
     print(f'Selected {len(selected_features)} features by RFECV')
