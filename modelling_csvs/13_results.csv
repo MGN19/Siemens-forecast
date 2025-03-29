@@ -16,3 +16,10 @@ SVR,"['#8_Lag_3', 'Clean_UK', '#13_RollingMean_3', 'Clean_US']",17251.6749781877
 SVR,"['#8_Lag_3', 'Clean_UK', '#13_RollingMean_3', 'Clean_US']",17251.6749781877,12091.326787502932,95.04706569463991,118.2170662697447
 SVR,"['#8_Lag_3', 'Clean_UK', '#13_RollingMean_3', 'Clean_US']",17251.6749781877,12091.326787502932,95.04706569463991,118.2170662697447
 SVR,"['#8_Lag_3', 'Clean_UK', '#13_RollingMean_3', 'Clean_US']",30510.001868401607,21693.640589141385,99.59842738284466,99.45983485889022
+arima,N/A,12064.232218380967,12265.516728129789,78.78721625929248,116.56536690333665
+sarimax,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']",13887.527352492682,18535.601652032743,93.76432982770487,127.47448485371287
+prophet,N/A,,12804.874376827182,,77.79669722328912
+XGBoost,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']",0.0024168688810087074,9636.86048461842,9.824002944469612e-06,82.80085921287537
+XGBRegressor,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']",0.0024168688810087074,9636.86048461842,9.824002944469612e-06,82.80085921287537
+XGBRegressor,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']",0.0024168688810087074,9636.86048461842,9.824002944469612e-06,82.80085921287537
+XGBRegressor,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']",0.0024168688810087074,9636.86048461842,9.824002944469612e-06,82.80085921287537

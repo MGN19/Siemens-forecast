@@ -15,3 +15,9 @@ SVR,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",12818.15504533585,23646.7452731642
 SVR,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",12818.15504533585,23646.74527316423,3.0153416663365845e+20,2.597773221859712e+20
 SVR,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",12818.15504533585,23646.74527316423,3.0153416663365845e+20,2.597773221859712e+20
 SVR,"['#13_Lag_3', 'Clean_Ita', '#14_Lag_1']",15980.874874495568,26819.629558615106,1.289982708416548e+18,1.3617333695185403e+18
+arima,N/A,8008.769362697346,23261.27565214397,3.1410197272692864e+20,3.0304210542003434e+20
+sarimax,"['USA Production Index_Lag_12', 'GerHolidayCount', 'USA Shipments Index_Lag_12_RollingMean3', '#14_Lag_1', '#9_Lag_1_RollingMean12', '#16_Lag_3', '#9_Lag_1', '#13_Lag_3_RollingMean3', '#36_Lag_12', '#13_Lag_1']",9855.820183854928,44255.24795055042,3.3310594765366454e+20,4.226519020559861e+20
+prophet,N/A,,21664.05274355395,,1.971785154061763e+20
+XGBoost,"['USA Production Index_Lag_12', 'GerHolidayCount', 'USA Shipments Index_Lag_12_RollingMean3', '#14_Lag_1', '#9_Lag_1_RollingMean12', '#16_Lag_3', '#9_Lag_1', '#13_Lag_3_RollingMean3', '#36_Lag_12', '#13_Lag_1']",0.0012362838108125052,24581.37961954129,7517384704000.0,3.3001863497929196e+20
+OrthogonalMatchingPursuit,"['USA Production Index_Lag_12', 'GerHolidayCount', 'USA Shipments Index_Lag_12_RollingMean3', '#14_Lag_1', '#9_Lag_1_RollingMean12', '#16_Lag_3', '#9_Lag_1', '#13_Lag_3_RollingMean3', '#36_Lag_12', '#13_Lag_1']",7534.205592135304,23105.748348539266,3.013974994518648e+20,2.746034953004965e+20
+OrthogonalMatchingPursuit,"['USA Production Index_Lag_12', 'GerHolidayCount', 'USA Shipments Index_Lag_12_RollingMean3', '#14_Lag_1', '#9_Lag_1_RollingMean12', '#16_Lag_3', '#9_Lag_1', '#13_Lag_3_RollingMean3', '#36_Lag_12', '#13_Lag_1']",7534.205592135304,23105.748348539266,3.013974994518648e+20,2.746034953004965e+20

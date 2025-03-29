@@ -16,3 +16,7 @@ SVR,"['#12_Lag_12', 'Buildings_Ger', 'Fossil_Chi', 'Clean_Fra']",2499317.1903332
 SVR,"['#12_Lag_12', 'Buildings_Ger', 'Fossil_Chi', 'Clean_Fra']",2499317.190333231,2982796.8094323943,19.404324864297173,15.899106224633206
 SVR,"['#12_Lag_12', 'Buildings_Ger', 'Fossil_Chi', 'Clean_Fra']",2499317.190333231,2982796.8094323943,19.404324864297173,15.899106224633206
 SVR,"['#12_Lag_12', 'Buildings_Ger', 'Fossil_Chi', 'Clean_Fra']",12109625.881066322,13996198.336076224,99.9995416333212,99.99961258817206
+arima,N/A,2817290.656533946,2092585.741432912,17.790453479504848,11.264459066804205
+sarimax,"['GerHolidayCount', '#20_Lag_1', '#14_Lag_1', 'SWI Production Index_Lag_12', 'TotalDaysInMonth', 'stock_price_change_Lag_12', '#36_Lag_12', '#8_Lag_3', '#12_Lag_12', 'Fossil_Chi_Lag_12_RollingMean3', 'USA Shipments Index_Lag_12']",7215723.007988295,4532869.17908385,34.35355040405968,28.102570173881887
+prophet,N/A,,2104622.373441579,,13.533385905008785
+XGBoost,"['GerHolidayCount', '#20_Lag_1', '#14_Lag_1', 'SWI Production Index_Lag_12', 'TotalDaysInMonth', 'stock_price_change_Lag_12', '#36_Lag_12', '#8_Lag_3', '#12_Lag_12', 'Fossil_Chi_Lag_12_RollingMean3', 'USA Shipments Index_Lag_12']",1.1811694506273331,2068256.8750945807,9.027903757896638e-06,11.918143182992935
