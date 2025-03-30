@@ -433,3 +433,51 @@ def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_
         print(f"Results appended to {csv_path}")
 
     return model, val_preds
+
+
+def predict_and_update(model_fits, X_train_scaled, X_val_scaled, X_test_scaled):
+    """
+    Predicts for each model in model_fits, updates lag and rolling mean columns in X_test, and returns predictions.
+
+    Parameters:
+    - model_fits: Dictionary of fitted models.
+    - X_train_scaled, X_val_scaled, X_test_scaled: DataFrames of features for training, validation, and test data.
+    
+    Returns:
+    - predictions_dict: A dictionary of predictions for each model.
+    """
+    # initialize relevant columns
+    lag_sales_columns = [col for col in X_test_scaled.columns if col.startswith('#') and '_Lag_' in col and 'RollingMean' not in col]
+    rolling_sales_columns = [col for col in X_test_scaled.columns if col.startswith('#') and '_Lag_' in col and 'RollingMean' in col]
+
+    # Initialize dictionary to store predictions for each model
+    predictions_dict = {key: [] for key in model_fits.keys()}
+    
+    # Combine X_train, X_val, and X_test into a single DataFrame to keep original index
+    combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
+
+    for key, model in model_fits.items():
+        # Get batch predictions for all test samples at once
+        batch_predictions = model.predict(X_test_scaled)
+        
+        # Store predictions in the dictionary for this model
+        predictions_dict[key] = batch_predictions
+        
+        # Loop through lag columns and update them with predictions
+        for col in lag_sales_columns:
+            if col.split('_Lag_')[0] == key:
+                lag_col = int(col.split('_Lag_')[-1])
+                for i, prediction in enumerate(batch_predictions):
+                    if i + lag_col < len(X_test_scaled):  # Ensure we are within bounds
+                        X_test_scaled.at[i + lag_col, col] = prediction
+        
+        # Loop through rolling mean columns and update their values
+        for col in rolling_sales_columns:
+            if col.split('_RollingMean')[0] == key:
+                rolling_window = int(col.split('_RollingMean')[-1])
+                lag_col = f"{key}_Lag"
+                
+                # Recalculate rolling mean using the lag column for the current model
+                X_test_scaled[col] = combined_X[lag_col].rolling(window=rolling_window).mean()
+
+    return predictions_dict
