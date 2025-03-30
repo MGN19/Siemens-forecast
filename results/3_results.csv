@@ -39,3 +39,4 @@ RandomForestRegressor,"['TotalDaysInMonth', '#8_Lag_3', '#36_Lag_12', 'SWI Produ
 RandomForestRegressor,"['#20_Lag_1', 'Year', 'TotalDaysInMonth', 'cos_month']",{'max_depth': 5},877124.3011970157,2038553.6639592436,5.688063334969002,11.308482280469349
 LGBMRegressor,"['#20_Lag_1', 'Year', 'TotalDaysInMonth', 'cos_month']",{},2017879.749023134,2706945.3902306296,13.443864812334985,13.712720875625656
 LGBMRegressor,"['#20_Lag_1', 'Year', 'TotalDaysInMonth', 'cos_month']",{},2017879.749023134,2706945.3902306296,13.443864812334985,13.712720875625656
+sarimax,"['GerHolidayCount', '#20_Lag_1', '#14_Lag_1', 'SWI Production Index_Lag_12', 'TotalDaysInMonth', 'stock_price_change_Lag_12', '#36_Lag_12', '#8_Lag_3', '#12_Lag_12', 'Fossil_Chi_Lag_12_RollingMean3', 'USA Shipments Index_Lag_12']","(1, 1, 1, 12)",7215723.007988295,4532869.17908385,34.35355040405968,28.102570173881887
