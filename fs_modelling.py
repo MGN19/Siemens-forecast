@@ -52,18 +52,9 @@ def train_val_split(df, target_cols, val_percentage):
 
 
 # Scaling Data
-def scale_data(X_train, X_val, scaler_type='minmax'):
+def scale_data(X_train, X_val, X_test, scaler_type='minmax'):
     """
-    Scales the training and validation data using the specified scaler.
-    
-    Parameters:
-        X_train (pd.DataFrame): The training features.
-        X_val (pd.DataFrame): The validation features.
-        scaler_type (str): The type of scaler to use.
-    
-    Returns:
-        X_train_scaled (pd.DataFrame): Scaled training features.
-        X_val_scaled (pd.DataFrame): Scaled validation features.
+    Scales the training, validation and testing data using the specified scaler.
     """
     # Choose scaler based on input
     if scaler_type == 'minmax':
@@ -75,17 +66,19 @@ def scale_data(X_train, X_val, scaler_type='minmax'):
     else:
         raise ValueError("Invalid scaler type. Choose either 'minmax' or 'standard'.")
     
-    # Fit on training data and transform it
     X_train_scaled = scaler.fit_transform(X_train)
-    
-    # Transform the validation data using the same scaler
+
     X_val_scaled = scaler.transform(X_val)
+    X_test_scaled = scaler.transform(X_test)
+    
+
     
     # Convert back to DataFrame to keep column names
     X_train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns, index=X_train.index)
     X_val_scaled = pd.DataFrame(X_val_scaled, columns=X_val.columns, index=X_val.index)
+    X_test_scaled = pd.DataFrame(X_test_scaled, columns=X_test.columns, index=X_test.index)
     
-    return X_train_scaled, X_val_scaled
+    return X_train_scaled, X_val_scaled, X_test_scaled
 
 # Feature Selection
 def correlation(X_train, corr_threshold=0.85, plot=False):
