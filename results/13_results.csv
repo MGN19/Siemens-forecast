@@ -39,3 +39,4 @@ RandomForestRegressor,"['USA Shipments Index_Lag_12_RollingMean3', '#8_Lag_3', '
 RandomForestRegressor,"['#8_Lag_3', '#13_Lag_3', 'cos_month', '#6_Lag_1_RollingMean3', '#6_Lag_1_RollingMean6', 'Clean_US_Lag_12']",{'max_depth': 5},4395.809235418357,11740.018856853148,31.930877112961408,97.45253502353673
 LGBMRegressor,"['#8_Lag_3', '#13_Lag_3', 'cos_month', '#6_Lag_1_RollingMean3', '#6_Lag_1_RollingMean6', 'Clean_US_Lag_12']",{},10730.935306690908,11730.11754430096,83.80409072315175,110.49275947969342
 LGBMRegressor,"['#8_Lag_3', '#13_Lag_3', 'cos_month', '#6_Lag_1_RollingMean3', '#6_Lag_1_RollingMean6', 'Clean_US_Lag_12']",{},10730.935306690908,11730.11754430096,83.80409072315175,110.49275947969342
+sarimax,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']","(1, 1, 1, 12)",13887.527352492682,18535.601652032743,93.76432982770487,127.47448485371287
