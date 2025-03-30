@@ -10,6 +10,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 
+from sklearn.model_selection import TimeSeriesSplit
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from prophet import Prophet
@@ -106,8 +107,10 @@ def correlation(X_train, corr_threshold=0.85, plot=False):
 def rfe(X_train, y_train, rfe_model=None, plot=False):
     if rfe_model is None:
         rfe_model = LinearRegression()
+
+    tscv = TimeSeriesSplit(n_splits=5)
     
-    rfecv = RFECV(estimator=rfe_model, cv=5, 
+    rfecv = RFECV(estimator=rfe_model, cv=tscv, 
                   min_features_to_select=20, scoring='neg_root_mean_squared_error')
     rfecv.fit(X_train, y_train)
     selected_features = X_train.columns[rfecv.support_].tolist()
@@ -163,7 +166,8 @@ def feature_importance(X_train, y_train, importance_threshold='mean', plot=False
     return selected_features
 
 def lasso_(X_train, y_train, plot=False):
-    lasso = LassoCV(cv=10, random_state=42).fit(X_train, y_train)
+    tscv = TimeSeriesSplit(n_splits=5)
+    lasso = LassoCV(cv=tscv, random_state=42).fit(X_train, y_train)
     selected_features = X_train.columns[lasso.coef_ != 0].tolist()
     
     print(f'Selected {len(selected_features)} features by Lasso regularization')
