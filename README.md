@@ -22,7 +22,7 @@ The project follows the CRISP-DM framework and includes:
 - data/y_... - target datasets
 - results/ - saved predictions
 
-- extra data/ - data collected from the interned and transformed as necessary
+- extra data/ - data collected from the internet and transformed as necessary
 
 2. Notebooks
 01_EDA - Exploratory Data Analysis & Preprocessing
