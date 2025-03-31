@@ -1,6 +1,7 @@
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler
 import pandas as pd
 import numpy as np
+import re
 from sklearn.feature_selection import RFECV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression, LassoCV
@@ -453,6 +454,7 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
     predictions_dict = {key: [] for key in trained_models_dict.keys()}
 
     prediction_order = ["13", "14", "12", "16", "3", "1", "6", "11", "8", "9", "4", "5", "20", "36"]
+    
     # Iterate over each model and predict
     for key in prediction_order:
         # Retrieve the relevant columns for the current model
@@ -473,14 +475,17 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
                         
         # Combine datasets for rolling mean calculations
         combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
+        
         # Update rolling mean columns after predictions
         for col in rolling_sales_columns:
             if col.startswith(f'#{key}_'):
-                rolling_window = int(col.split('_RollingMean_')[-1])
-                lag_col = f'#{key}_Lag_{rolling_window}'
-                
-                # Apply rolling mean using the combined data
-                if lag_col in X_test_scaled.columns:
-                    X_test_scaled[col] = combined_X[lag_col].rolling(window=rolling_window, min_periods=1).mean()
+                match = re.search(r'RollingMean(\d+)', col)
+                if match:
+                    rolling_window = int(match.group(1))
+                    lag_col = f'#{key}_Lag_{rolling_window}'
+                    
+                    # Apply rolling mean using the combined data
+                    if lag_col in X_test_scaled.columns:
+                        X_test_scaled[col] = combined_X[lag_col].rolling(window=rolling_window, min_periods=1).mean()
 
     return predictions_dict
