@@ -79,3 +79,5 @@ XGBRegressor,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6
 XGBRegressor,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']",{},0.0024168688810087074,9636.86048461842,9.824002944469612e-06,82.80085921287537
 XGBRegressor,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']",{},0.0024168688810087074,9636.86048461842,9.824002944469612e-06,82.80085921287537
 XGBRegressor,"['USA Shipments Index_Lag_12_RollingMean3', 'Clean_US_Lag_12', '#6_Lag_1_RollingMean3', 'cos_month', '#6_Lag_1_RollingMean6', '#8_Lag_3', 'cos_Quarter', '#3_Lag_1']",{},0.0024168688810087074,9636.86048461842,9.824002944469612e-06,82.80085921287537
+arima,N/A,"(2, 1, 1)",11487.723306469607,11515.167301546977,79.18572145768825,105.93701845866794
+arima,N/A,"(3, 1, 1)",11157.534331693589,11898.189181324184,78.21717227783736,117.5315510960533
