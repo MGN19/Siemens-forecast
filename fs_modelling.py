@@ -456,8 +456,9 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
     # Combine datasets for rolling mean calculations
     combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
 
+    prediction_order = ["13", "14", "12", "16", "3", "1", "6", "11", "8", "9", "4", "5", "20", "36"]
     # Iterate over each model and predict
-    for key, model in trained_models_dict.items():
+    for key in prediction_order:
         # Retrieve the relevant columns for the current model
         model_features = [selected_features[key_train] for key_train in selected_features.keys() if key_train.endswith(key)]
         # Flatten model_features to avoid list of lists issue
@@ -465,7 +466,9 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
 
         # Make predictions and update lag columns
         for i in range(len(X_test_scaled)):
-            prediction = model.predict(X_test_scaled[model_features].iloc[[i]])[0]
+            print(f'Features no dict: {model_features}')
+            print(f'Features: {X_test_scaled[model_features].columns}')
+            prediction = trained_models_dict[key].predict(X_test_scaled[model_features].iloc[[i]])[0]
             predictions_dict[key].append(prediction)
 
             # Update lag columns for future predictions
