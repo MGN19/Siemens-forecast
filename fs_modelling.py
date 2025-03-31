@@ -435,9 +435,6 @@ def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_
     return model, val_preds
 
 
-import pandas as pd
-import numpy as np
-
 def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test_scaled):
     """
     Predicts for each model in trained_models_dict one step at a time, updates lag and rolling mean columns in X_test, and returns predictions.
@@ -467,24 +464,19 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
             
             # Update lag columns for future predictions
             for col in lag_sales_columns:
-                if col.startswith(key + '_Lag_'):
+                if col.startswith('#' + key + '_Lag_'):
                     lag_val = int(col.split('_Lag_')[-1])
                     if i + lag_val < len(X_test_scaled):  # Prevent out-of-bounds errors
                         X_test_scaled.at[i + lag_val, col] = prediction
         
         # Update rolling mean columns after the loop
         for col in rolling_sales_columns:
-            if col.startswith(key + '_'):
+            if col.startswith('#'+ key + '_'):
                 rolling_window = int(col.split('_RollingMean_')[-1])
-                lag_base_col = None
                 
                 # Find the corresponding lag column for this model
                 for lag_col in lag_sales_columns:
-                    if lag_col.startswith(key + '_Lag_'):
-                        lag_base_col = lag_col  # Use the first matching lag column
-                        break
-                
-                if lag_base_col and lag_base_col in combined_X.columns:
-                    X_test_scaled[col] = combined_X[lag_base_col].rolling(window=rolling_window, min_periods=1).mean()
+                    if lag_col.startswith('#' + key + '_Lag_'):
+                        X_test_scaled[col] = combined_X[lag_col].rolling(window=rolling_window, min_periods=1).mean()
     
     return predictions_dict
