@@ -21,6 +21,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
 from xgboost import XGBRegressor
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.svm import SVR
+import lightgbm as lgb
 
 
 # Train-Validation Split
@@ -464,7 +465,6 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
         
         model = trained_models_dict[key]
         model_features = selected_features[key]
-        print(f'Key: {key}')
         for i in range(len(X_test_scaled)):
             X_test_scaled_reduced = X_test_scaled[model_features]
             if "SARIMAX" in str(type(model)):
@@ -475,7 +475,7 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
             elif isinstance(model, Prophet):
                 future_df = pd.DataFrame({'ds': [X_test_scaled.index[i]]})
                 prediction = model.predict(future_df)['yhat'].values[0]
-            elif isinstance(model, XGBRegressor) or isinstance(model, RandomForestRegressor) or isinstance(model, HistGradientBoostingRegressor) or isinstance(model, SVR):
+            elif isinstance(model, XGBRegressor) or isinstance(model, RandomForestRegressor) or isinstance(model, HistGradientBoostingRegressor) or isinstance(model, SVR)or isinstance(model, lgb.LGBMRegressor):
                 prediction = model.predict(X_test_scaled_reduced.iloc[[i]])[0]
             else:
                 raise ValueError(f"Unsupported model type for key {key}: {type(model)}")
