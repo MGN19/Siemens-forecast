@@ -437,3 +437,63 @@ def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_
         print(f"Results appended to {csv_path}")
 
     return model, val_preds
+
+
+def predict_and_update(trained_models_dict, model_type, X_train_scaled, X_val_scaled, X_test_scaled, selected_features, exog_data=None):
+    """
+    Predicts for each model in trained_models_dict one step at a time, updates lag and rolling mean columns in X_test, and returns predictions.
+
+    Parameters:
+    - trained_models_dict: Dictionary of fitted models.
+    - model_type: Type of model ('arima', 'sarimax', 'prophet', or 'ml').
+    - X_train_scaled, X_val_scaled, X_test_scaled: DataFrames of features for training, validation, and test data.
+    - exog_data: Optional exogenous data for SARIMAX.
+
+    Returns:
+    - predictions_dict: A dictionary of predictions for each model.
+    """
+    # Identify relevant lag and rolling mean columns
+    lag_sales_columns = [col for col in X_test_scaled.columns if '_Lag_' in col and 'RollingMean' not in col]
+    rolling_sales_columns = [col for col in X_test_scaled.columns if 'RollingMean' in col]
+
+    # Initialize dictionary to store predictions
+    predictions_dict = {key: [] for key in trained_models_dict.keys()}
+
+    # Combine datasets for rolling mean calculations
+    combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
+
+    for key, model in trained_models_dict.items():
+        for i in range(len(X_test_scaled)):
+            # Generate prediction based on model type
+            if model_type == 'arima' or model_type == 'sarimax':
+                if exog_data is not None:
+                    prediction = model.forecast(steps=1, exog=exog_data.iloc[[i]])[0]  # With exogenous variables
+                else:
+                    prediction = model.forecast(steps=1)[0]  # Without exogenous variables
+
+            else:  # Regular ML models
+                for key_train in selected_features.keys():
+                    prod_cat = key_train.split('_train_')[-1]
+                    if prod_cat == key:
+                        prediction = model.predict(X_test_scaled[selected_features[key_train]].iloc[[i]])[0]
+
+            predictions_dict[key].append(prediction)
+
+            # Update lag columns for future predictions
+            for col in lag_sales_columns:
+                if col.startswith('#' + key + '_Lag_'):
+                    lag_val = int(col.split('_Lag_')[-1])
+                    if i + lag_val < len(X_test_scaled):  # Prevent out-of-bounds errors
+                        X_test_scaled.at[i + lag_val, col] = prediction
+
+        # Update rolling mean columns after the loop
+        for col in rolling_sales_columns:
+            if col.startswith('#' + key + '_'):
+                rolling_window = int(col.split('_RollingMean_')[-1])
+
+                # Find the corresponding lag column for this model
+                for lag_col in lag_sales_columns:
+                    if lag_col.startswith('#' + key + '_Lag_'):
+                        X_test_scaled[col] = combined_X[lag_col].rolling(window=rolling_window, min_periods=1).mean()
+
+    return predictions_dict
