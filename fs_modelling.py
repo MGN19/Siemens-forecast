@@ -453,22 +453,16 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
     # Initialize dictionary to store predictions
     predictions_dict = {key: [] for key in trained_models_dict.keys()}
 
-    # Combine datasets for rolling mean calculations
-    combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
-
     prediction_order = ["13", "14", "12", "16", "3", "1", "6", "11", "8", "9", "4", "5", "20", "36"]
     # Iterate over each model and predict
     for key in prediction_order:
         # Retrieve the relevant columns for the current model
-        model_features = [selected_features[key_train] for key_train in selected_features.keys() if key_train.endswith(key)]
-        # Flatten model_features to avoid list of lists issue
-        model_features = [item for sublist in model_features for item in sublist]  # Flatten the list
+        model_features = selected_features[f'y_train_' + key]
 
         # Make predictions and update lag columns
         for i in range(len(X_test_scaled)):
-            print(f'Features no dict: {model_features}')
-            print(f'Features: {X_test_scaled[model_features].columns}')
-            prediction = trained_models_dict[key].predict(X_test_scaled[model_features].iloc[[i]])[0]
+            X_test_scaled_reduced = X_test_scaled[model_features]
+            prediction = trained_models_dict[key].predict(X_test_scaled_reduced.iloc[[i]])[0]
             predictions_dict[key].append(prediction)
 
             # Update lag columns for future predictions
@@ -477,7 +471,9 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
                     lag_val = int(col.split('_Lag_')[-1])
                     if i + lag_val < len(X_test_scaled):  # Prevent out-of-bounds errors
                         X_test_scaled.at[i + lag_val, col] = prediction
-
+                        
+        # Combine datasets for rolling mean calculations
+        combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
         # Update rolling mean columns after predictions
         for col in rolling_sales_columns:
             if col.startswith(f'#{key}_'):
