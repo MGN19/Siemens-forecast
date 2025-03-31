@@ -435,7 +435,7 @@ def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_
     return model, val_preds
 
 
-def predict_and_update(trained_models_dict, model_type, X_train_scaled, X_val_scaled, X_test_scaled, exog_data=None):
+def predict_and_update(trained_models_dict, model_type, X_train_scaled, X_val_scaled, X_test_scaled, selected_features, exog_data=None):
     """
     Predicts for each model in trained_models_dict one step at a time, updates lag and rolling mean columns in X_test, and returns predictions.
 
@@ -468,7 +468,7 @@ def predict_and_update(trained_models_dict, model_type, X_train_scaled, X_val_sc
                     prediction = model.forecast(steps=1)[0]  # Without exogenous variables
 
             else:  # Regular ML models
-                prediction = model.predict(X_test_scaled.iloc[[i]])[0]
+                prediction = model.predict(X_test_scaled[selected_features].iloc[[i]])[0]
 
             predictions_dict[key].append(prediction)
 
