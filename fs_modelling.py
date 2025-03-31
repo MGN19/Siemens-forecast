@@ -368,7 +368,7 @@ def stats_models(model_type, X_train, X_val, y_train, y_val,
 def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_path=None, **model_params):
     """
     Train any regression model and evaluate its performance.
-    
+
     Parameters:
     - model: The regression model instance (e.g., XGBRegressor, RandomForestRegressor).
     - X_train: Training features.
@@ -380,9 +380,7 @@ def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_
     - **model_params: Additional parameters to pass to the model.
     """
     
-    model.set_params(**model_params)
-    
-    # Fit 
+    model.set_params(**model_params)  
     model.fit(X_train, target_train)
     
     # Make predictions
@@ -396,7 +394,7 @@ def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_
     val_rmse = np.sqrt(mean_squared_error(target_val, val_preds))  
     val_mape = mean_absolute_percentage_error(target_val, val_preds) * 100 
     
-    # Plot
+    # Plotting
     if plot:
         plt.figure(figsize=(12, 6))
         plt.plot(target_train.index, target_train, label='Actual Train', color='blue', alpha=0.7)
@@ -433,6 +431,7 @@ def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_
         print(f"Results appended to {csv_path}")
 
     return model, val_preds
+
 
 
 def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test_scaled, selected_features):
