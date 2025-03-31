@@ -372,7 +372,7 @@ def stats_models(model_type, X_train, X_val, y_train, y_val,
 def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_path=None, **model_params):
     """
     Train any regression model and evaluate its performance.
-    
+
     Parameters:
     - model: The regression model instance (e.g., XGBRegressor, RandomForestRegressor).
     - X_train: Training features.
@@ -384,9 +384,7 @@ def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_
     - **model_params: Additional parameters to pass to the model.
     """
     
-    model.set_params(**model_params)
-    
-    # Fit 
+    model.set_params(**model_params)  
     model.fit(X_train, target_train)
     
     # Make predictions
@@ -400,7 +398,7 @@ def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_
     val_rmse = np.sqrt(mean_squared_error(target_val, val_preds))  
     val_mape = mean_absolute_percentage_error(target_val, val_preds) * 100 
     
-    # Plot
+    # Plotting
     if plot:
         plt.figure(figsize=(12, 6))
         plt.plot(target_train.index, target_train, label='Actual Train', color='blue', alpha=0.7)
@@ -439,15 +437,14 @@ def all_models(model, X_train, X_val, target_train, target_val, plot=False, csv_
     return model, val_preds
 
 
-def predict_and_update(trained_models_dict, model_type, X_train_scaled, X_val_scaled, X_test_scaled, selected_features, exog_data=None):
+
+def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test_scaled, selected_features):
     """
     Predicts for each model in trained_models_dict one step at a time, updates lag and rolling mean columns in X_test, and returns predictions.
 
     Parameters:
     - trained_models_dict: Dictionary of fitted models.
-    - model_type: Type of model ('arima', 'sarimax', 'prophet', or 'ml').
     - X_train_scaled, X_val_scaled, X_test_scaled: DataFrames of features for training, validation, and test data.
-    - exog_data: Optional exogenous data for SARIMAX.
 
     Returns:
     - predictions_dict: A dictionary of predictions for each model.
@@ -459,41 +456,35 @@ def predict_and_update(trained_models_dict, model_type, X_train_scaled, X_val_sc
     # Initialize dictionary to store predictions
     predictions_dict = {key: [] for key in trained_models_dict.keys()}
 
-    # Combine datasets for rolling mean calculations
-    combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
+    prediction_order = ["13", "14", "12", "16", "3", "1", "6", "11", "8", "9", "4", "5", "20", "36"]
+    # Iterate over each model and predict
+    for key in prediction_order:
+        # Retrieve the relevant columns for the current model
+        model_features = selected_features[f'y_train_' + key]
 
-    for key, model in trained_models_dict.items():
+        # Make predictions and update lag columns
         for i in range(len(X_test_scaled)):
-            # Generate prediction based on model type
-            if model_type == 'arima' or model_type == 'sarimax':
-                if exog_data is not None:
-                    prediction = model.forecast(steps=1, exog=exog_data.iloc[[i]])[0]  # With exogenous variables
-                else:
-                    prediction = model.forecast(steps=1)[0]  # Without exogenous variables
-
-            else:  # Regular ML models
-                for key_train in selected_features.keys():
-                    prod_cat = key_train.split('_train_')[-1]
-                    if prod_cat == key:
-                        prediction = model.predict(X_test_scaled[selected_features[key_train]].iloc[[i]])[0]
-
+            X_test_scaled_reduced = X_test_scaled[model_features]
+            prediction = trained_models_dict[key].predict(X_test_scaled_reduced.iloc[[i]])[0]
             predictions_dict[key].append(prediction)
 
             # Update lag columns for future predictions
             for col in lag_sales_columns:
-                if col.startswith('#' + key + '_Lag_'):
+                if col.startswith(f'#{key}_Lag_'):
                     lag_val = int(col.split('_Lag_')[-1])
                     if i + lag_val < len(X_test_scaled):  # Prevent out-of-bounds errors
                         X_test_scaled.at[i + lag_val, col] = prediction
-
-        # Update rolling mean columns after the loop
+                        
+        # Combine datasets for rolling mean calculations
+        combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
+        # Update rolling mean columns after predictions
         for col in rolling_sales_columns:
-            if col.startswith('#' + key + '_'):
+            if col.startswith(f'#{key}_'):
                 rolling_window = int(col.split('_RollingMean_')[-1])
-
-                # Find the corresponding lag column for this model
-                for lag_col in lag_sales_columns:
-                    if lag_col.startswith('#' + key + '_Lag_'):
-                        X_test_scaled[col] = combined_X[lag_col].rolling(window=rolling_window, min_periods=1).mean()
+                lag_col = f'#{key}_Lag_{rolling_window}'
+                
+                # Apply rolling mean using the combined data
+                if lag_col in X_test_scaled.columns:
+                    X_test_scaled[col] = combined_X[lag_col].rolling(window=rolling_window, min_periods=1).mean()
 
     return predictions_dict
