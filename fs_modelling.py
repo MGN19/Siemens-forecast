@@ -7,6 +7,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression, LassoCV
 from sklearn.feature_selection import mutual_info_regression
 
+
 import seaborn as sns
 import matplotlib.pyplot as plt
 import os
@@ -17,7 +18,10 @@ from prophet import Prophet
 from sklearn.base import clone
 from lazypredict.Supervised import LazyRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
-import xgboost as xgb
+from xgboost import XGBRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.svm import SVR
+import lightgbm as lgb
 
 
 # Train-Validation Split
@@ -442,6 +446,7 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
     Parameters:
     - trained_models_dict: Dictionary of fitted models.
     - X_train_scaled, X_val_scaled, X_test_scaled: DataFrames of features for training, validation, and test data.
+    - selected_features: Dictionary mapping model keys to their respective features.
 
     Returns:
     - predictions_dict: A dictionary of predictions for each model.
@@ -453,17 +458,28 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
     # Initialize dictionary to store predictions
     predictions_dict = {key: [] for key in trained_models_dict.keys()}
 
-    prediction_order = ["13", "14", "12", "16", "3", "1", "6", "11", "8", "9", "4", "5", "20", "36"]
-    
-    # Iterate over each model and predict
-    for key in prediction_order:
-        # Retrieve the relevant columns for the current model
-        model_features = selected_features[f'y_train_' + key]
-        X_test_scaled_reduced = X_test_scaled[model_features]
+    prediction_order = ['6', '8', '11', '20', '12', '14', '3', '13', '4', '5', '9', '16', '36', '1']
 
-        # Make predictions and update lag columns
+
+    for key in prediction_order:
+        
+        model = trained_models_dict[key]
+        model_features = selected_features[key]
         for i in range(len(X_test_scaled)):
-            prediction = trained_models_dict[key].predict(X_test_scaled_reduced.iloc[[i]])[0]
+            X_test_scaled_reduced = X_test_scaled[model_features]
+            if "SARIMAX" in str(type(model)):
+                exog_values = X_test_scaled_reduced.iloc[[i]]
+                prediction = model.forecast(steps=1, exog=exog_values)[0]
+            elif "ARIMA" in str(type(model)):
+                prediction = model.forecast(steps=1)[0]
+            elif isinstance(model, Prophet):
+                future_df = pd.DataFrame({'ds': [X_test_scaled.index[i]]})
+                prediction = model.predict(future_df)['yhat'].values[0]
+            elif isinstance(model, XGBRegressor) or isinstance(model, RandomForestRegressor) or isinstance(model, HistGradientBoostingRegressor) or isinstance(model, SVR)or isinstance(model, lgb.LGBMRegressor):
+                prediction = model.predict(X_test_scaled_reduced.iloc[[i]])[0]
+            else:
+                raise ValueError(f"Unsupported model type for key {key}: {type(model)}")
+            
             predictions_dict[key].append(prediction)
 
             # Update lag columns for future predictions
@@ -471,22 +487,17 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
                 if col.startswith(f'#{key}_Lag_'):
                     lag_val = int(col.split('_Lag_')[-1])
                     if i + lag_val < len(X_test_scaled):
-                        future_index = X_test_scaled.index[i + lag_val]  # Get the correct date index
+                        future_index = X_test_scaled.index[i + lag_val]
                         X_test_scaled.at[future_index, col] = prediction
-                        
-        # Combine datasets for rolling mean calculations
-        combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
-        
-        # Update rolling mean columns after predictions
-        for col in rolling_sales_columns:
-            if col.startswith(f'#{key}_'):
-                match = re.search(r'RollingMean(\d+)', col)
-                if match:
-                    rolling_window = int(match.group(1))
-                    lag_col = f'#{key}_Lag_{rolling_window}'
-                    
-                    # Apply rolling mean using the combined data
-                    if lag_col in X_test_scaled.columns:
-                        X_test_scaled[col] = combined_X[lag_col].rolling(window=rolling_window, min_periods=1).mean()
 
+            # Combine datasets for rolling mean calculations
+            combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
+
+            # Update rolling mean columns after predictions
+            for col in rolling_sales_columns:
+                if f'#{key}_Lag_' in col:
+                    for window in [3, 6, 12]:
+                        X_test_scaled[col] = combined_X[col].rolling(window=window, min_periods=1).mean()
+
+    
     return predictions_dict
