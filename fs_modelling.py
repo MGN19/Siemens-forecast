@@ -468,7 +468,10 @@ def predict_and_update(trained_models_dict, model_type, X_train_scaled, X_val_sc
                     prediction = model.forecast(steps=1)[0]  # Without exogenous variables
 
             else:  # Regular ML models
-                prediction = model.predict(X_test_scaled[selected_features].iloc[[i]])[0]
+                for key_train in selected_features.keys():
+                    prod_cat = key_train.split('_train_')[-1]
+                    if prod_cat == key:
+                        prediction = model.predict(X_test_scaled[selected_features[key_train]].iloc[[i]])[0]
 
             predictions_dict[key].append(prediction)
 
