@@ -459,10 +459,10 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
     for key in prediction_order:
         # Retrieve the relevant columns for the current model
         model_features = selected_features[f'y_train_' + key]
+        X_test_scaled_reduced = X_test_scaled[model_features]
 
         # Make predictions and update lag columns
         for i in range(len(X_test_scaled)):
-            X_test_scaled_reduced = X_test_scaled[model_features]
             prediction = trained_models_dict[key].predict(X_test_scaled_reduced.iloc[[i]])[0]
             predictions_dict[key].append(prediction)
 
@@ -470,8 +470,9 @@ def predict_and_update(trained_models_dict, X_train_scaled, X_val_scaled, X_test
             for col in lag_sales_columns:
                 if col.startswith(f'#{key}_Lag_'):
                     lag_val = int(col.split('_Lag_')[-1])
-                    if i + lag_val < len(X_test_scaled):  # Prevent out-of-bounds errors
-                        X_test_scaled.at[i + lag_val, col] = prediction
+                    if i + lag_val < len(X_test_scaled):
+                        future_index = X_test_scaled.index[i + lag_val]  # Get the correct date index
+                        X_test_scaled.at[future_index, col] = prediction
                         
         # Combine datasets for rolling mean calculations
         combined_X = pd.concat([X_train_scaled, X_val_scaled, X_test_scaled], axis=0)
